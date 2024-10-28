@@ -1,7 +1,5 @@
 // src/store/authStore.ts
 import { create } from "zustand";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
 import { fetchUser, loginUser } from "@/services/auth.service";
 import { getToken } from "@/config/env_config";
 import { localStorageConstant } from "@/constant/constant";
@@ -18,14 +16,14 @@ export interface AuthState {
 
 export const useAuthStore = create<AuthState>((set) => ({
     user: null,
-    token: getToken(), // Initialize token from local storage
-    isLoading: false,
+    token: getToken(),
+    isLoading: true, // Set to true initially to wait for auth check
     error: null,
+
     login: async (email, password) => {
+        set({ isLoading: true });
         try {
-            set({ isLoading: true, error: null });
             const res = await loginUser(email, password);
-            console.log("response", res);
             const { user, token } = res.data;
             localStorage.setItem(localStorageConstant.JWT_TOKEN, token);
             set({ user, token, isLoading: false });
@@ -35,38 +33,30 @@ export const useAuthStore = create<AuthState>((set) => ({
             return false;
         }
     },
+
     logout: () => {
         localStorage.removeItem(localStorageConstant.JWT_TOKEN);
         set({ user: null, token: null });
     },
+
     checkAuthStatus: async () => {
         const token = getToken();
         if (!token) {
-            // Redirect to login if no token is found
-            set({ user: null, token: null });
+            set({ user: null, token: null, isLoading: false });
             return;
         }
 
+        set({ isLoading: true });
         try {
-            set({ isLoading: true });
             const res = await fetchUser();
-            const user = res.data;
-            set({ user, token, isLoading: false });
+            set({ user: res.data, token, isLoading: false });
         } catch (err: any) {
-            set({ error: err.message, isLoading: false });
+            set({
+                error: err.message,
+                user: null,
+                token: null,
+                isLoading: false,
+            });
         }
     },
 }));
-
-export const useProtectedRoute = (allowedRoles: string[]) => {
-    const { user } = useAuthStore();
-    const router = useRouter();
-
-    useEffect(() => {
-        if (user && !allowedRoles.includes(user.role)) {
-            router.replace("/");
-        } else if (!user) {
-            router.replace("/auth/login"); // Redirect to login if no user
-        }
-    }, [user, allowedRoles, router]);
-};

@@ -1,12 +1,12 @@
 // src/components/AppContainer.tsx
-import React, { useEffect } from "react";
-import "./../app/globals.css";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import { useAuthStore } from "@/store/authStore";
 import { Toaster } from "./ui/toaster";
 import { Loading } from "./Loading";
+import SideBar from "./SideBar";
 
 interface AppContainerProps {
     children: React.ReactNode;
@@ -20,43 +20,51 @@ const AppContainer: React.FC<AppContainerProps> = ({
     const router = useRouter();
     const pathname = usePathname();
     const { user, checkAuthStatus, isLoading } = useAuthStore();
+    const hasCheckedAuth = useRef(false);
+    const [isClient, setIsClient] = useState(false); // Track client render
 
-    // Run `checkAuthStatus` only once on initial render
+    // Wait for client render to avoid hydration errors
     useEffect(() => {
-        console.log("calling checkAuth");
-        checkAuthStatus();
+        setIsClient(true);
+    }, []);
+
+    // Check auth only once on initial render
+    useEffect(() => {
+        if (!hasCheckedAuth.current) {
+            checkAuthStatus();
+            hasCheckedAuth.current = true;
+        }
     }, [checkAuthStatus]);
 
-    // Handle redirection based on authentication and authorization
+    // Redirect logic (only runs on the client)
     useEffect(() => {
-        if (!isLoading) {
+        if (isClient && !isLoading) {
+            // Only redirect after initial client render
             if (!user && pathname !== "/auth/login") {
                 router.push("/auth/login");
+            } else if (user && pathname === "/auth/login") {
+                router.push("/");
             } else if (
                 user &&
                 allowedRoles.length > 0 &&
                 !allowedRoles.includes(user.role)
             ) {
                 router.push("/unauthorized");
-            } else if (user) {
-                router.push("/");
             }
         }
-    }, [user, pathname, allowedRoles, isLoading, router]);
+    }, [user, pathname, allowedRoles, isLoading, router, isClient]);
 
-    // Render a loading screen if `isLoading` is true
-    if (isLoading) {
+    // Render loading screen if still loading or if server-rendering
+    if (!isClient || isLoading) {
         return <Loading />;
     }
 
     return (
-        <div className="">
-            <div className="flex flex-col items-center justify-between min-h-screen px-2 bg-gray-800">
-                <Navbar />
-                {/* Always render children regardless of authentication */}
-                <main className="app-content">{children}</main>
-                <Footer />
-            </div>
+        <div className="flex flex-col items-center justify-between min-h-screen text-white">
+            <Navbar />
+            <SideBar />
+            <main className="app-content">{children}</main>
+            {/* <Footer /> */}
             <Toaster />
         </div>
     );

@@ -13,6 +13,5 @@ export const getToken = (): string | null => {
     if (typeof window !== "undefined") {
         token = window.localStorage.getItem(localStorageConstant.JWT_TOKEN);
     }
-    console.log("token is ", token);
     return token;
 };
