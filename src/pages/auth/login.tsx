@@ -16,11 +16,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { isValidEmail } from "@/util/validateInput";
 import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 const Register = () => {
     const { login, isLoading } = useAuthStore();
-    const router = useRouter();
     const { toast } = useToast();
     const [form, setForm] = useState({
         email: "admin_ui@gmail.com", // For testing purpose
@@ -62,7 +60,6 @@ const Register = () => {
                 toast({
                     title: "Login successful",
                 });
-                router.replace("/");
             } else {
                 toast({
                     title: "Something went wrong",

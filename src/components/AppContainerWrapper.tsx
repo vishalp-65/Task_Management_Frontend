@@ -18,8 +18,8 @@ const AppContainerWrapper: React.FC<AppContainerWrapperProps> = ({
 
     // Define route roles here
     const routeRoles: Record<string, string[]> = {
-        "/admin": ["Admin"],
-        "/dashboard": ["Admin", "User"],
+        "/admin": ["ADMIN", "MG"],
+        "/dashboard": ["ADMIN", "MG", "PO", "TO", "BO"],
     };
 
     const allowedRoles = routeRoles[pathname!] || [];

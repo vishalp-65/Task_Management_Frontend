@@ -2,11 +2,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Navbar from "./Navbar";
-import Footer from "./Footer";
 import { useAuthStore } from "@/store/authStore";
 import { Toaster } from "./ui/toaster";
 import { Loading } from "./Loading";
-import SideBar from "./SideBar";
 
 interface AppContainerProps {
     children: React.ReactNode;
@@ -43,14 +41,17 @@ const AppContainer: React.FC<AppContainerProps> = ({
             if (!user && pathname !== "/auth/login") {
                 router.push("/auth/login");
             } else if (user && pathname === "/auth/login") {
-                router.push("/");
-            } else if (
-                user &&
-                allowedRoles.length > 0 &&
-                !allowedRoles.includes(user.role)
-            ) {
-                router.push("/unauthorized");
+                router.push("/dashboard");
             }
+            // else if (
+            //     user &&
+            //     allowedRoles.length > 0 &&
+            //     !allowedRoles.includes(
+            //         user.roles.some((role: any) => role.role_name)
+            //     )
+            // ) {
+            //     router.push("/unauthorized");
+            // }
         }
     }, [user, pathname, allowedRoles, isLoading, router, isClient]);
 
@@ -60,10 +61,11 @@ const AppContainer: React.FC<AppContainerProps> = ({
     }
 
     return (
-        <div className="flex flex-col items-center justify-between min-h-screen text-white">
+        <div className="flex flex-col justify-between min-h-screen text-white">
             <Navbar />
-            <SideBar />
-            <main className="app-content">{children}</main>
+            <div className="app-content w-full h-full flex items-center justify-center">
+                {children}
+            </div>
             {/* <Footer /> */}
             <Toaster />
         </div>

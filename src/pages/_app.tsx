@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
     return (
         <AppContainerWrapper>
-            <Component {...pageProps} />;
+            <Component {...pageProps} />
         </AppContainerWrapper>
     );
 }

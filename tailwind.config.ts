@@ -51,6 +51,7 @@ const config: Config = {
                     "5": "hsl(var(--chart-5))",
                 },
                 blue: "#0094FF",
+                taskContainer_dark: "#292D38",
             },
             borderRadius: {
                 lg: "var(--radius)",

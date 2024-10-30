@@ -85,7 +85,23 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom right, black 60%, blue);
+
+    /* Apply gradient with a slight opacity */
+    background-image: linear-gradient(
+            to bottom right,
+            rgba(0, 0, 0, 0.9) 33%,
+            rgba(0, 0, 0, 0.9) 33%,
+            rgba(0, 0, 0, 0.9) 66%,
+            rgba(0, 43, 195, 0.9)
+        ),
+        url("/bgImg.jpg");
+
+    /* Ensure the image fills the screen */
+    background-size: cover;
+    background-position: center;
+
+    /* Use background-blend-mode to blend the gradient with the image */
+    background-blend-mode: darken;
 
     z-index: -10;
     opacity: 1;
