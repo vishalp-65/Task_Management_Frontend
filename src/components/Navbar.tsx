@@ -1,4 +1,4 @@
-import { LogOut, Search, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import {
@@ -9,10 +9,8 @@ import {
 } from "./ui/dropdown-menu";
 import { useAuthStore } from "@/store/authStore";
 
-type Props = {};
-
-const Navbar = (props: Props) => {
-    const { user, isLoading, logout } = useAuthStore();
+const Navbar = () => {
+    const { user, logout } = useAuthStore();
 
     return (
         <div className="h-16 w-full border-b border-gray-500 p-2">

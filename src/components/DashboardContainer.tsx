@@ -2,9 +2,7 @@ import React from "react";
 import SideBar from "./SideBar";
 import TaskContainer from "./task/TaskContainer";
 
-type Props = {};
-
-const DashboardContainer = (props: Props) => {
+const DashboardContainer = () => {
     return (
         <div className="flex h-full w-full items-center">
             <div className="basis-[5%]">

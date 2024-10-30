@@ -2,9 +2,7 @@ import { sidebarIcons } from "@/constant/sideBarIcons";
 import Image from "next/image";
 import React from "react";
 
-type Props = {};
-
-const SideBar = (props: Props) => {
+const SideBar = () => {
     return (
         <div className="flex flex-col items-center justify-center">
             <div className="flex flex-col items-center justify-center">
