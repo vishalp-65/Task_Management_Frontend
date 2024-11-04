@@ -4,7 +4,7 @@ export const sidebarIcons = [
         icon: "/svg/grid.svg",
     },
     {
-        name: "people",
+        name: "tasks",
         icon: "/svg/people.svg",
     },
     {

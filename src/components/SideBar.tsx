@@ -1,26 +1,41 @@
+// src/components/SideBar.tsx
+
 import { sidebarIcons } from "@/constant/sideBarIcons";
 import Image from "next/image";
 import React from "react";
 
-const SideBar = () => {
+interface SideBarProps {
+    activeTab: string;
+    onTabChange: (tabName: string) => void;
+}
+
+const SideBar: React.FC<SideBarProps> = ({ activeTab, onTabChange }) => {
     return (
-        <div className="flex flex-col items-center justify-center">
-            <div className="flex flex-col items-center justify-center">
-                {sidebarIcons.map((icons, indx) => (
-                    <div
-                        key={indx}
-                        className="w-9 h-9 rounded-full mb-1 bg-gray-800 flex items-center justify-center cursor-pointer"
-                    >
-                        <Image
-                            src={icons.icon}
-                            alt={icons.name}
-                            width={10}
-                            height={10}
-                            className="w-6 h-6 fill-white"
-                        />
-                    </div>
-                ))}
-            </div>
+        <div className="flex flex-col items-center justify-center space-y-1 p-4 h-full">
+            {sidebarIcons.map((icon, index) => (
+                <div
+                    key={index}
+                    onClick={() => onTabChange(icon.name)}
+                    className={`w-10 h-10 flex items-center justify-center rounded-full cursor-pointer
+                       ${
+                           activeTab === icon.name
+                               ? "bg-yellow-200"
+                               : "bg-gray-700"
+                       }`}
+                >
+                    <Image
+                        src={icon.icon}
+                        alt={icon.name}
+                        width={20}
+                        height={20}
+                        className={`transition-colors duration-200  ${
+                            activeTab === icon.name
+                                ? "filter brightness-0" // Black when active
+                                : "filter invert brightness-0" // White when inactive
+                        }`}
+                    />
+                </div>
+            ))}
         </div>
     );
 };

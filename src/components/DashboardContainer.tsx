@@ -1,18 +1,30 @@
-import React from "react";
+// src/components/DashboardContainer.tsx
+
+"use client";
+
+import React, { useState } from "react";
 import SideBar from "./SideBar";
-import TaskContainer from "./task/TaskContainer";
+import CardContainer from "./CardContainer";
 
 const DashboardContainer = () => {
+    const [activeTab, setActiveTab] = useState<string>("tasks"); // Default active tab
+
+    const handleTabChange = (tabName: string) => {
+        setActiveTab(tabName);
+    };
+
     return (
-        <div className="flex h-full w-full items-center">
+        <div className="flex h-full w-full">
             <div className="basis-[5%]">
-                <SideBar />
+                <SideBar activeTab={activeTab} onTabChange={handleTabChange} />
             </div>
+
+            {/* Task container */}
             <div
                 style={{ height: "calc(100vh - 6rem)" }}
-                className="basis-[95%] bg-gra"
+                className="basis-[95%]"
             >
-                <TaskContainer />
+                <CardContainer activeTab={activeTab} />
             </div>
         </div>
     );
