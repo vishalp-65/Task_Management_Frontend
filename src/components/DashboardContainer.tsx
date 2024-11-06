@@ -19,7 +19,7 @@ const DashboardContainer = () => {
                 <SideBar activeTab={activeTab} onTabChange={handleTabChange} />
             </div>
 
-            {/* Task container */}
+            {/* Card container */}
             <div
                 style={{ height: "calc(100vh - 6rem)" }}
                 className="basis-[95%]"

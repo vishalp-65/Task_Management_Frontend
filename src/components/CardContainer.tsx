@@ -19,7 +19,7 @@ const CardContainer: React.FC<TaskContainerProps> = ({ activeTab }) => {
     }
 
     return (
-        <div className="bg-taskContainer_dark rounded-xl mb-2 mt-1 mr-3 h-full">
+        <div className="bg-taskContainer_dark rounded-xl mb-2 mt-1 mr-3 h-full overflow-y-auto">
             {content}
         </div>
     );
