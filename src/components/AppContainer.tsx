@@ -37,6 +37,11 @@ const AppContainer: React.FC<AppContainerProps> = ({
     // Redirect logic (only runs on the client)
     useEffect(() => {
         if (isClient && !isLoading) {
+            if (!user && pathname === "/") {
+                router.push("/auth/login");
+            } else if (user && pathname === "/") {
+                router.push("/dashboard");
+            }
             // Only redirect after initial client render
             if (!user && pathname !== "/auth/login") {
                 router.push("/auth/login");

@@ -1,5 +1,7 @@
 // src/components/TaskCard.tsx
 
+import { Task } from "@/types/types";
+import { calculateTimePassed, capitalizeFirstLetter } from "@/util/helper";
 import Image from "next/image";
 import React from "react";
 
@@ -19,7 +21,7 @@ const IconText = ({
     width?: number;
     height?: number;
 }) => (
-    <div className="flex items-center gap-1 cursor-pointer">
+    <div className="flex items-center gap-1.5 cursor-pointer">
         <Image src={src} alt={alt} width={width} height={height} />
         <p className={`${textStyle}`}>{text}</p>
     </div>
@@ -47,7 +49,9 @@ const Badge = ({
 const ProgressBar = ({ progress }: { progress: number }) => (
     <div className="w-full h-2 rounded-full bg-[#E6E6E6] overflow-hidden">
         <div
-            className="h-full bg-green-500"
+            className={`h-full ${
+                progress >= 100 ? "bg-[#FC5602]" : "bg-green-500"
+            }`}
             style={{ width: `${progress}%` }}
         />
     </div>
@@ -58,10 +62,20 @@ const truncateText = (text: string, maxLength: number) =>
     text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
 
 type TaskCardProps = {
-    progress?: number; // Progress bar percentage
+    task: Task;
 };
 
-const TaskCard = ({ progress = 50 }: TaskCardProps) => {
+const TaskCard = ({ task }: TaskCardProps) => {
+    const {
+        hoursPassed,
+        minutesPassed,
+        hoursLeft,
+        minutesLeft,
+        percentagePassed,
+        hoursLate,
+        minutesLate,
+    } = calculateTimePassed(task.created_at, task.due_date);
+
     return (
         <div className="bg-white rounded-2xl w-[400px] h-[236px] m-2 p-4 text-black flex flex-col justify-between">
             <div className="flex justify-between items-center">
@@ -74,14 +88,16 @@ const TaskCard = ({ progress = 50 }: TaskCardProps) => {
                             height={18}
                         />
                     </div>
-                    <p>General Service</p>
+                    <p>{capitalizeFirstLetter(task.task_type)} Service</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Badge
-                        text="SLA Breached"
-                        iconSrc="/svg/alert.svg"
-                        color="bg-[#FF6161]"
-                    />
+                    {(percentagePassed >= 100 || task.status === "overdue") && (
+                        <Badge
+                            text="SLA Breached"
+                            iconSrc="/svg/alert.svg"
+                            color="bg-[#FF6161]"
+                        />
+                    )}
                     <div className="p-1 hover:bg-gray-200 rounded-full cursor-pointer">
                         <Image
                             src="/svg/three-dot.svg"
@@ -94,14 +110,9 @@ const TaskCard = ({ progress = 50 }: TaskCardProps) => {
             </div>
 
             <div>
-                <p className="font-semibold text-lg font-serif">
-                    New Inventories Added
-                </p>
+                <p className="font-semibold text-lg font-serif">{task.title}</p>
                 <p className="text-gray-600">
-                    {truncateText(
-                        "Call Rancho & inform about the upcoming new inventories to them and update its status.",
-                        60
-                    )}
+                    {truncateText(task.description, 60)}
                 </p>
             </div>
 
@@ -110,21 +121,41 @@ const TaskCard = ({ progress = 50 }: TaskCardProps) => {
                     <IconText
                         src="/svg/clock.svg"
                         alt="clock"
-                        text="10h 10m passed"
-                        textStyle="font-semibold"
+                        text={
+                            task.status === "closed"
+                                ? `Finished in 10h 10m`
+                                : `${hoursPassed}h ${minutesPassed}m passed`
+                        }
+                        textStyle={`font-semibold ${
+                            task.status === "closed" ? "text-green-500" : ""
+                        }`}
                     />
-                    <p>
-                        10h 10m <span className="font-semibold">left</span>
+                    <p
+                        className={`${
+                            task.status === "overdue" ? "text-[#FC5602]" : ""
+                        }`}
+                    >
+                        {task.status === "overdue" ? (
+                            <>
+                                {hoursLate}h {minutesLate}m{" "}
+                                <span className="font-semibold">late</span>
+                            </>
+                        ) : (
+                            <>
+                                {hoursLeft}h {minutesLeft}m{" "}
+                                <span className="font-semibold">left</span>
+                            </>
+                        )}
                     </p>
                 </div>
-                <ProgressBar progress={progress} />
+                <ProgressBar progress={percentagePassed} />
             </div>
 
             <div className="flex justify-between text-sm">
                 <IconText
                     src="/svg/user.svg"
-                    alt="user"
-                    text="Vishal Panchal"
+                    alt={task.assignee.user_name}
+                    text={task.assignee.user_name}
                     width={25}
                     height={25}
                 />
