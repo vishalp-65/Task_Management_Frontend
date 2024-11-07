@@ -1,42 +1,60 @@
 import React, { useState } from "react";
 import { TaskTypesItems, TimeFrames } from "@/constant/constant";
 import Dropdown from "../reusable/Dropdown";
-import Image from "next/image";
 import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { useTaskStore } from "@/store/taskStore";
+import IconWithButton from "../reusable/IconWithButton";
+import { capitalizeFirstLetter } from "@/util/helper";
 
-type Props = {};
+type Props = {
+    currentTaskStatus: "open" | "completed";
+    handleTaskStatusChange: (status: "open" | "completed") => void;
+};
 
-const TaskNavbar: React.FC<Props> = () => {
-    const [taskStatus, setTaskStatus] = useState<"open" | "completed">("open");
+const TaskNavbar: React.FC<Props> = ({
+    currentTaskStatus,
+    handleTaskStatusChange,
+}) => {
+    const [isSearchSelected, setIsSearchSelected] = useState<boolean>(false);
+    const [filters, setFilters] = useState<any>({});
+    const { fetchTaskList } = useTaskStore();
+    const [searchTerm, setSearchTerm] = useState("");
 
-    const handleStatusChange = (status: "open" | "completed") => {
-        setTaskStatus(status);
+    const handleSearchClick = () => {
+        setIsSearchSelected((prev) => !prev);
+    };
+
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value);
+        setFilters((prev: any) => ({ ...prev, searchTerm }));
+        fetchTaskList({ ...filters, searchTerm });
     };
 
     const renderStatusButton = (status: "open" | "completed") => (
         <p
             className={`rounded-full w-24 px-1 text-center py-1.5 cursor-pointer ${
-                taskStatus === status ? "bg-blue" : "bg-black"
+                currentTaskStatus === status ? "bg-blue" : "bg-black"
             }`}
-            onClick={() => handleStatusChange(status)}
+            onClick={() => handleTaskStatusChange(status)}
         >
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+            {capitalizeFirstLetter(status)}
         </p>
-    );
-
-    const renderIcon = (src: string, alt: string) => (
-        <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center cursor-pointer">
-            <Image src={src} alt={alt} width={20} height={20} />
-        </div>
     );
 
     return (
         <div className="flex justify-between p-3 border-b border-gray-600">
-            <div className="flex items-center gap-3">
+            <div className="flex grow items-center gap-3">
                 <Dropdown
                     placeholder="All Tasks"
                     items={TaskTypesItems}
-                    onSelect={() => {}}
+                    onSelect={(selected) => {
+                        setFilters((prev: any) => ({
+                            ...prev,
+                            taskType: selected,
+                        }));
+                        fetchTaskList({ taskType: selected });
+                    }}
                 />
                 <div className="flex items-center bg-black rounded-full text-sm">
                     {renderStatusButton("open")}
@@ -44,14 +62,40 @@ const TaskNavbar: React.FC<Props> = () => {
                 </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex grow items-center justify-end gap-3 w-fit">
                 <Dropdown
                     placeholder="Today"
                     items={TimeFrames}
-                    onSelect={() => {}}
+                    onSelect={(selected) => {
+                        setFilters((prev: any) => ({
+                            ...prev,
+                            timeFrame: selected,
+                        }));
+                        fetchTaskList({ ...filters, timeFrame: selected });
+                    }}
                 />
-                {renderIcon("/svg/search.svg", "search")}
-                {renderIcon("/svg/filter.svg", "filter")}
+                {isSearchSelected || searchTerm ? (
+                    <Input
+                        type="text"
+                        value={searchTerm}
+                        placeholder="Search..."
+                        onChange={handleSearch}
+                        className="text-white rounded-2xl max-w-52 h-9 bg-gray-700 transition placeholder:text-gray-400"
+                        onBlur={() => setIsSearchSelected(false)} // Hide input when it loses focus
+                    />
+                ) : (
+                    <IconWithButton
+                        src="/svg/search.svg"
+                        alt="search"
+                        customClassName="bg-[#23252D] border border-[#50515B] hover:bg-[#3a3c42] p-2 rounded-full"
+                        handleClick={handleSearchClick} // Focus input when icon is clicked
+                    />
+                )}
+                <IconWithButton
+                    src={"/svg/filter.svg"}
+                    alt="filter"
+                    customClassName="bg-[#23252D] border border-[#50515B]"
+                />
                 <Button className="rounded-full px-6">ADD TASK</Button>
             </div>
         </div>

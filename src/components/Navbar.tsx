@@ -10,13 +10,7 @@ import {
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { useAuthStore } from "@/store/authStore";
-
-// Icon component to handle individual icons
-const NavIcon = ({ src, alt }: { src: string; alt: string }) => (
-    <div className="w-7 h-7 rounded-full bg-gray-800 flex items-center justify-center cursor-pointer">
-        <Image src={src} alt={alt} width={10} height={10} className="w-4 h-4" />
-    </div>
-);
+import IconWithButton from "./reusable/IconWithButton";
 
 const Navbar = () => {
     const { user, logout } = useAuthStore();
@@ -33,8 +27,16 @@ const Navbar = () => {
 
             {user && (
                 <div className="flex items-center gap-2">
-                    <NavIcon src="/svg/search.svg" alt="Search" />
-                    <NavIcon src="/svg/bell.svg" alt="Notification" />
+                    <IconWithButton
+                        src="/svg/search.svg"
+                        alt="search"
+                        customClassName="bg-icon_bg"
+                    />
+                    <IconWithButton
+                        src="/svg/bell.svg"
+                        alt="Notification"
+                        customClassName="bg-icon_bg"
+                    />
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>

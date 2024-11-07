@@ -28,7 +28,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     return (
         <Select onValueChange={onSelect}>
             <SelectTrigger
-                className={`w-[120px] bg-transparent border-gray-600 ${className}`}
+                className={`w-fit gap-3 h-9 rounded-lg bg-transparent border-gray-600 ${className}`}
             >
                 <SelectValue placeholder={placeholder} />
             </SelectTrigger>

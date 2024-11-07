@@ -1,15 +1,12 @@
 // src/components/Analytics.tsx
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
-import { ChartData, ChartOptions } from "chart.js";
+import React, { useEffect, useMemo } from "react";
 import { transformData } from "@/util/helper";
-import { defaultDataForChart } from "@/constant/constant";
 import PieChart from "../chart/PieChart";
+import { useAnalyticsStore } from "@/store/analyticsStore";
+import BarChart from "../chart/BarChart";
 
-type Props = {};
-
-// SubComponent for individual statistic boxes
 const StatBox = ({
     iconSrc,
     label,
@@ -18,25 +15,29 @@ const StatBox = ({
     trendValue,
     trendText,
     customClass,
-}: any) => (
+}: {
+    iconSrc: string;
+    label: string;
+    value: string | number;
+    trend?: string | null;
+    trendValue?: number | null;
+    trendText?: string;
+    customClass?: string;
+}) => (
     <div className="text-center space-y-1">
         <div className="flex gap-1 items-center justify-center">
-            <Image src={iconSrc} alt={label} width={15} height={15} />
+            <Image src={iconSrc} alt={label} width={20} height={20} />
             <p>{label}</p>
         </div>
-        <p
-            className={`text-3xl font-serif ${
-                customClass ? customClass : "font-semibold"
-            }`}
-        >
+        <p className={`text-3xl font-serif ${customClass || "font-semibold"}`}>
             {value}
         </p>
-        {trend && (
+        {trend && trendValue !== undefined && (
             <div className="flex gap-1 items-center">
                 <Image src={trend} alt="Trend arrow" width={10} height={10} />
                 <p
                     className={`text-xs ${
-                        trendValue > 0 ? "text-green-500" : "text-red-500"
+                        trendValue! > 0 ? "text-green-500" : "text-red-500"
                     }`}
                 >
                     {trendText}
@@ -46,10 +47,18 @@ const StatBox = ({
     </div>
 );
 
-// SubComponent for PieChart legend items
-const PieChartLegend = ({ data }: any) => (
+const PieChartLegend = ({
+    data,
+}: {
+    data: Array<{
+        color: string;
+        value: number;
+        name: string;
+        percentage?: number;
+    }>;
+}) => (
     <div className="ml-2 grid grid-cols-2 gap-2">
-        {data.map((item: any, index: number) => (
+        {data.map((item, index) => (
             <div key={index} className="text-sm">
                 <div className="flex items-center gap-2">
                     <div
@@ -57,7 +66,7 @@ const PieChartLegend = ({ data }: any) => (
                         className="w-3 h-3 rounded-full"
                     />
                     <p>
-                        {item.value} ({item.percentage}%)
+                        {item.value} ({item.percentage ?? 0}%)
                     </p>
                 </div>
                 <p className="text-xs">{item.name}</p>
@@ -66,76 +75,106 @@ const PieChartLegend = ({ data }: any) => (
     </div>
 );
 
-const Analytics: React.FC<Props> = () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [data, setData] = useState<ChartData<"pie">>(
-        transformData(defaultDataForChart)
+const Analytics: React.FC = () => {
+    const {
+        totalTasksCreated,
+        completedTasks,
+        isLoading,
+        openTasks,
+        overdueTasks,
+        brandTasksCount = 0,
+        eventTasksCount = 0,
+        generalTasksCount = 0,
+        inventoryTasksCount = 0,
+        fetchAnalyticsState,
+    } = useAnalyticsStore();
+
+    // Memoize chart data to update only when counts change
+    const chartData = useMemo(
+        () => [
+            {
+                label: "A",
+                value: generalTasksCount,
+                name: "General Service",
+                color: "#78E7F0",
+            },
+            {
+                label: "B",
+                value: brandTasksCount,
+                name: "Brand Related",
+                color: "#07747D",
+            },
+            {
+                label: "C",
+                value: eventTasksCount,
+                name: "Event Related",
+                color: "#09949F",
+            },
+            {
+                label: "D",
+                value: inventoryTasksCount,
+                name: "Inventory Related",
+                color: "#38C6D2",
+            },
+        ],
+        [
+            generalTasksCount,
+            brandTasksCount,
+            eventTasksCount,
+            inventoryTasksCount,
+        ]
     );
 
-    const options: ChartOptions<"pie"> = {
-        responsive: true,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                callbacks: {
-                    label: function (context) {
-                        let label = context.label || "";
-                        if (context.raw !== undefined) {
-                            label += ": " + context.raw + " units";
-                        }
-                        return label;
-                    },
-                },
-            },
-            datalabels: {
-                display: true,
-                formatter: (value, ctx) =>
-                    ctx?.chart?.data?.labels![ctx.dataIndex],
-                color: "#fff",
-                align: "center",
-                anchor: "center",
-                font: { weight: "bold", size: 14 },
-            },
-        },
-    };
+    useEffect(() => {
+        fetchAnalyticsState("alltime");
+    }, [fetchAnalyticsState]);
+
+    if (isLoading) return <p>Loading...</p>;
 
     return (
         <div className="bg-gray-100 text-nowrap rounded-2xl text-black m-3 h-36 p-4">
             <div className="flex items-center justify-evenly h-full">
-                {/* Stat Boxes */}
                 <StatBox
                     iconSrc="/svg/cube.svg"
                     label="Total task created"
-                    value="2,765"
+                    value={totalTasksCreated}
                     trend="/svg/up.svg"
-                    trendValue="2"
+                    trendValue={2}
                     trendText="+40 more than last week"
                 />
                 <div className="h-[60%] w-px bg-gray-300" />
-
                 <StatBox
                     iconSrc="/svg/cube.svg"
                     label="Open tasks"
-                    value="2,765"
+                    value={openTasks}
                     trend="/svg/up.svg"
-                    trendValue="2"
+                    trendValue={2}
                     trendText="+40 more than last week"
                 />
-                <div className="h-[60%] w-px bg-gray-300" />
+                {/* Bar Chart for Open and Completed Tasks */}
+                <BarChart
+                    openTasks={openTasks}
+                    completedTasks={completedTasks}
+                />
 
+                <div className="h-[60%] w-px bg-gray-300" />
                 <StatBox
                     iconSrc="/svg/cube.svg"
                     label="SLA breached tasks"
-                    value="No breaches"
+                    value={`${overdueTasks > 0 ? overdueTasks : "No breaches"}`}
                     trend={null}
-                    customClass="text-gray-500/70"
+                    customClass={`${
+                        overdueTasks > 0
+                            ? "text-red-500 font-semibold"
+                            : "text-gray-500/70"
+                    }`}
+                    trendValue={null}
+                    trendText=""
                 />
                 <div className="h-[60%] w-px bg-gray-300" />
-
-                {/* Pie Chart with Legend */}
                 <div className="flex items-center">
-                    <PieChart data={data} options={options} />
-                    <PieChartLegend data={defaultDataForChart} />
+                    <PieChart data={transformData(chartData)} />
+                    <PieChartLegend data={chartData} />
                 </div>
             </div>
         </div>

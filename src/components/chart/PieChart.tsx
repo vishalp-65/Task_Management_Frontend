@@ -22,11 +22,39 @@ ChartJS.register(
 );
 
 interface PieChartProps {
-    data: ChartData<"pie">; // Ensure data is typed specifically for the "pie" chart
-    options?: ChartOptions<"pie">; // Ensure options are typed specifically for the "pie" chart
+    data: ChartData<"pie">;
 }
 
-const PieChart: FC<PieChartProps> = memo(({ data, options }) => {
+const PieChart: FC<PieChartProps> = memo(({ data }) => {
+    const options: ChartOptions<"pie"> = {
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: function (context) {
+                        return `${context.label || ""}: ${
+                            context.raw ?? 0
+                        } units`;
+                    },
+                },
+            },
+            datalabels: {
+                display: true,
+                formatter: (value, ctx) => {
+                    // Check if value is 0 or undefined
+                    return value && value > 0
+                        ? ctx?.chart?.data?.labels![ctx.dataIndex]
+                        : ""; // Return empty string to hide the label
+                },
+                color: "#fff",
+                align: "center",
+                anchor: "center",
+                font: { weight: "bold", size: 14 },
+            },
+        },
+    };
+
     return (
         <div style={{ position: "relative", height: "120px", width: "fit" }}>
             <Pie data={data} options={options} />
