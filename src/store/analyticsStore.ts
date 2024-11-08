@@ -40,7 +40,6 @@ export const useAnalyticsStore = create<AnalyticState>((set) => ({
         set({ isLoading: true });
         try {
             const res = await fetchAnalytics(timeframe);
-            console.log("Fetched analytics", res.data);
             const analyticsData = res.data;
             set({
                 totalTasksCreated: analyticsData.totalTasksCreated,

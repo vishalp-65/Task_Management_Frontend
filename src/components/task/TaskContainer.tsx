@@ -10,9 +10,8 @@ type Props = {
 
 const TaskContainer: React.FC<Props> = ({ currentTaskStatus }) => {
     const { tasks, isLoading } = useTaskStore();
-
     return (
-        <div className="">
+        <div className="transition-opacity duration-500 ease-in-out">
             <p className="text-xl font-semibold font-serif mb-2 ml-2">
                 {capitalizeFirstLetter(currentTaskStatus)} tasks
             </p>

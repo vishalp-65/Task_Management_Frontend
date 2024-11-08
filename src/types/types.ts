@@ -25,7 +25,7 @@ export interface Task {
     description: string;
     task_type: "general" | "brand" | "event" | "inventory";
     due_date: string;
-    status: "open" | "closed" | "in-progress" | "overdue";
+    status: "open" | "completed" | "in-progress" | "overdue";
     created_at: string;
     updated_at: string;
     creator: User;

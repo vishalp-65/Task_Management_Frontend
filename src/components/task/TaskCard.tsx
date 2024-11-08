@@ -1,11 +1,11 @@
 // src/components/TaskCard.tsx
-
 import { Task } from "@/types/types";
 import { calculateTimePassed, capitalizeFirstLetter } from "@/util/helper";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
+import TaskDropDownMenu from "./TaskDropDownMenu";
 
-// Reusable IconText Component
+// IconText Component for displaying an icon and text side-by-side
 const IconText = ({
     src,
     alt,
@@ -23,11 +23,11 @@ const IconText = ({
 }) => (
     <div className="flex items-center gap-1.5 cursor-pointer">
         <Image src={src} alt={alt} width={width} height={height} />
-        <p className={`${textStyle}`}>{text}</p>
+        <p className={textStyle}>{text}</p>
     </div>
 );
 
-// Reusable Badge Component
+// Badge Component for displaying text with an icon
 const Badge = ({
     text,
     iconSrc,
@@ -45,7 +45,7 @@ const Badge = ({
     </div>
 );
 
-// Reusable ProgressBar Component
+// ProgressBar Component for visualizing task progress
 const ProgressBar = ({ progress }: { progress: number }) => (
     <div className="w-full h-2 rounded-full bg-[#E6E6E6] overflow-hidden">
         <div
@@ -57,7 +57,6 @@ const ProgressBar = ({ progress }: { progress: number }) => (
     </div>
 );
 
-// Utility function to truncate text
 const truncateText = (text: string, maxLength: number) =>
     text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
 
@@ -66,6 +65,7 @@ type TaskCardProps = {
 };
 
 const TaskCard = ({ task }: TaskCardProps) => {
+    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const {
         hoursPassed,
         minutesPassed,
@@ -76,8 +76,14 @@ const TaskCard = ({ task }: TaskCardProps) => {
         minutesLate,
     } = calculateTimePassed(task.created_at, task.due_date);
 
+    // Handle menu open close
+    const handleMenuClick = () => {
+        setIsMenuOpen(!isMenuOpen);
+    };
+
     return (
         <div className="bg-white rounded-2xl w-[400px] h-[236px] m-2 p-4 text-black flex flex-col justify-between">
+            {/* Task Header */}
             <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                     <div className="p-1 bg-gray-200 rounded-full">
@@ -95,62 +101,70 @@ const TaskCard = ({ task }: TaskCardProps) => {
                         <Badge
                             text="SLA Breached"
                             iconSrc="/svg/alert.svg"
-                            color="bg-[#FF6161]"
+                            color="bg-red-400"
                         />
                     )}
-                    <div className="p-1 hover:bg-gray-200 rounded-full cursor-pointer">
-                        <Image
-                            src="/svg/three-dot.svg"
-                            alt="options"
-                            width={20}
-                            height={20}
-                        />
-                    </div>
+
+                    <TaskDropDownMenu
+                        isMenuOpen={isMenuOpen}
+                        handleMenuClick={handleMenuClick}
+                    />
                 </div>
             </div>
 
+            {/* Task Details */}
             <div>
-                <p className="font-semibold text-lg font-serif">{task.title}</p>
+                <div className="flex items-center gap-1">
+                    {task.status === "completed" && (
+                        <Image
+                            src="/svg/tick-blue.svg"
+                            alt="blue_tick"
+                            width={20}
+                            height={20}
+                        />
+                    )}
+                    <p
+                        className={`font-semibold text-lg font-serif ${
+                            task.status === "completed" ? "line-through" : ""
+                        }`}
+                    >
+                        {task.title}
+                    </p>
+                </div>
                 <p className="text-gray-600">
                     {truncateText(task.description, 60)}
                 </p>
             </div>
 
+            {/* Task Timing and Progress */}
             <div className="space-y-1.5">
                 <div className="flex justify-between text-sm">
                     <IconText
                         src="/svg/clock.svg"
                         alt="clock"
                         text={
-                            task.status === "closed"
-                                ? `Finished in 10h 10m`
+                            task.status === "completed"
+                                ? `Finished in ${hoursPassed}h ${minutesPassed}m`
                                 : `${hoursPassed}h ${minutesPassed}m passed`
                         }
-                        textStyle={`font-semibold ${
-                            task.status === "closed" ? "text-green-500" : ""
-                        }`}
+                        textStyle={`${
+                            task.status === "completed" ? "text-green-500" : ""
+                        } font-semibold`}
                     />
                     <p
                         className={`${
-                            task.status === "overdue" ? "text-[#FC5602]" : ""
+                            task.status === "overdue" ? "text-red-500" : ""
                         }`}
                     >
-                        {task.status === "overdue" ? (
-                            <>
-                                {hoursLate}h {minutesLate}m{" "}
-                                <span className="font-semibold">late</span>
-                            </>
-                        ) : (
-                            <>
-                                {hoursLeft}h {minutesLeft}m{" "}
-                                <span className="font-semibold">left</span>
-                            </>
-                        )}
+                        {task.status === "overdue"
+                            ? `${hoursLate}h ${minutesLate}m late`
+                            : `${hoursLeft}h ${minutesLeft}m left`}
                     </p>
                 </div>
                 <ProgressBar progress={percentagePassed} />
             </div>
 
+            {/* Task Footer */}
             <div className="flex justify-between text-sm">
                 <IconText
                     src="/svg/user.svg"

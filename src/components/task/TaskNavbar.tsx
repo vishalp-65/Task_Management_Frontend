@@ -1,3 +1,4 @@
+// src/components/TaskNavbar.tsx
 import React, { useState } from "react";
 import { TaskTypesItems, TimeFrames } from "@/constant/constant";
 import Dropdown from "../reusable/Dropdown";
@@ -21,9 +22,7 @@ const TaskNavbar: React.FC<Props> = ({
     const { fetchTaskList } = useTaskStore();
     const [searchTerm, setSearchTerm] = useState("");
 
-    const handleSearchClick = () => {
-        setIsSearchSelected((prev) => !prev);
-    };
+    const handleSearchClick = () => setIsSearchSelected((prev) => !prev);
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
@@ -53,7 +52,7 @@ const TaskNavbar: React.FC<Props> = ({
                             ...prev,
                             taskType: selected,
                         }));
-                        fetchTaskList({ taskType: selected });
+                        fetchTaskList({ ...filters, taskType: selected });
                     }}
                 />
                 <div className="flex items-center bg-black rounded-full text-sm">
@@ -61,7 +60,6 @@ const TaskNavbar: React.FC<Props> = ({
                     {renderStatusButton("completed")}
                 </div>
             </div>
-
             <div className="flex grow items-center justify-end gap-3 w-fit">
                 <Dropdown
                     placeholder="Today"
