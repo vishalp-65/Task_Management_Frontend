@@ -7,6 +7,7 @@ import { Input } from "../ui/input";
 import { useTaskStore } from "@/store/taskStore";
 import IconWithButton from "../reusable/IconWithButton";
 import { capitalizeFirstLetter } from "@/util/helper";
+import AddNewTaskModal from "./AddNewTaskModal";
 
 type Props = {
     currentTaskStatus: "open" | "completed";
@@ -42,7 +43,7 @@ const TaskNavbar: React.FC<Props> = ({
     );
 
     return (
-        <div className="flex justify-between p-3 border-b border-gray-600">
+        <div className="flex justify-between p-3 border-b border-gray-600 z-2">
             <div className="flex grow items-center gap-3">
                 <Dropdown
                     placeholder="All Tasks"
@@ -94,7 +95,7 @@ const TaskNavbar: React.FC<Props> = ({
                     alt="filter"
                     customClassName="bg-[#23252D] border border-[#50515B]"
                 />
-                <Button className="rounded-full px-6">ADD TASK</Button>
+                <AddNewTaskModal />
             </div>
         </div>
     );

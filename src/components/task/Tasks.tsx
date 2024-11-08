@@ -35,38 +35,40 @@ const Tasks = () => {
     // };
 
     return (
-        <div className="">
+        <div className="h-full">
             <TaskNavbar
                 currentTaskStatus={currentTaskStatus}
                 handleTaskStatusChange={handleTaskStatusChange}
             />
-            <Analytics />
-            <div className="mt-5 ml-2">
-                {isLoading ? (
-                    <p>Loading tasks...</p>
-                ) : (
-                    <TaskContainer currentTaskStatus={currentTaskStatus} />
+            <div className="h-full overflow-y-auto">
+                <Analytics />
+                <div className="mt-5 ml-2">
+                    {isLoading ? (
+                        <p>Loading tasks...</p>
+                    ) : (
+                        <TaskContainer currentTaskStatus={currentTaskStatus} />
+                    )}
+                </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-center my-4">
+                        {Array.from({ length: totalPages }, (_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => handlePageChange(index + 1)}
+                                className={`w-3 h-3 flex items-center justify-center m-1 p-3 rounded-full ${
+                                    currentPage === index + 1
+                                        ? "bg-blue text-white"
+                                        : "bg-gray-300 text-black"
+                                }`}
+                            >
+                                {index + 1}
+                            </button>
+                        ))}
+                    </div>
                 )}
             </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-                <div className="flex items-center justify-center my-4">
-                    {Array.from({ length: totalPages }, (_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => handlePageChange(index + 1)}
-                            className={`w-3 h-3 flex items-center justify-center m-1 p-3 rounded-full ${
-                                currentPage === index + 1
-                                    ? "bg-blue text-white"
-                                    : "bg-gray-300 text-black"
-                            }`}
-                        >
-                            {index + 1}
-                        </button>
-                    ))}
-                </div>
-            )}
         </div>
     );
 };

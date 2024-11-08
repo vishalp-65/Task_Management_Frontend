@@ -28,13 +28,17 @@ const Dropdown: React.FC<DropdownProps> = ({
     return (
         <Select onValueChange={onSelect}>
             <SelectTrigger
-                className={`w-fit gap-3 h-9 rounded-lg bg-transparent border-gray-600 ${className}`}
+                className={`w-fit gap-3 h-9 focus:invisible rounded-lg bg-transparent border-gray-600 ${className}`}
             >
                 <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent className="text-white bg-transparent border-gray-600 bg-gray-700">
                 {items.map((item) => (
-                    <SelectItem key={item.value} value={item.value}>
+                    <SelectItem
+                        key={item.value}
+                        value={item.value}
+                        className="px-7"
+                    >
                         {item.label}
                     </SelectItem>
                 ))}

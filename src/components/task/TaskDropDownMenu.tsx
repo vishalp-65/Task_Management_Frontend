@@ -8,19 +8,13 @@ import {
 } from "../ui/dropdown-menu";
 import Image from "next/image";
 
-type Props = {
-    isMenuOpen: boolean;
-    handleMenuClick: () => void;
-};
+type Props = {};
 
-const TaskDropDownMenu = ({ handleMenuClick, isMenuOpen }: Props) => {
+const TaskDropDownMenu = ({}: Props) => {
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger asChild={isMenuOpen}>
-                <div
-                    className="p-1 hover:bg-gray-300/70 rounded-full cursor-pointer"
-                    onClick={handleMenuClick}
-                >
+            <DropdownMenuTrigger asChild>
+                <div className="p-1 hover:bg-gray-300/70 rounded-full cursor-pointer">
                     <Image
                         src="/svg/three-dot.svg"
                         alt="options"
@@ -78,6 +72,9 @@ const TaskDropDownMenu = ({ handleMenuClick, isMenuOpen }: Props) => {
                     />
                     <span>Mark as Completed</span>
                 </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+
                 <DropdownMenuItem>
                     <Image
                         src="/svg/trash.svg"

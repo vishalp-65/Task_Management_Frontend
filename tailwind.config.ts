@@ -54,6 +54,8 @@ const config: Config = {
                 taskContainer_dark: "#292D38",
                 icon_bg: "#212121",
                 active_icon_bg: "#FFEA8E",
+                new_task_bg: "#1E2029",
+                button_bg: "#393a40",
             },
             borderRadius: {
                 lg: "var(--radius)",

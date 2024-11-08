@@ -3,10 +3,17 @@ export const localStorageConstant = {
 };
 
 export const TaskTypesItems = [
-    { value: "all", label: "All" },
+    { value: "all", label: "All", imgPath: "/svg/search.svg" },
     { value: "your", label: "Your" },
     { value: "team", label: "Team" },
     { value: "delegated", label: "Delegated" },
+];
+
+export const SelectItemForNewTask = [
+    { value: "general", label: "General", imgPath: "/svg/info.svg" },
+    { value: "brand", label: "Brand", imgPath: "/svg/brand-tag.svg" },
+    { value: "event", label: "Event", imgPath: "/svg/event.svg" },
+    { value: "inventory", label: "Inventory", imgPath: "/svg/people-tag.svg" },
 ];
 
 export const TimeFrames = [
