@@ -38,9 +38,6 @@ const CustomSelect: React.FC<DropdownProps> = ({
         if (onSelect) onSelect(value); // Optional callback
     };
 
-    // Get the label of the selected item (if any)
-    const selectedItem = items.find((item) => item.value === selectedValue);
-
     return (
         <Select onValueChange={handleSelectChange} value={selectedValue ?? ""}>
             <SelectTrigger

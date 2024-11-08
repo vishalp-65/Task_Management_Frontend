@@ -2,7 +2,7 @@
 import { Task } from "@/types/types";
 import { calculateTimePassed, capitalizeFirstLetter } from "@/util/helper";
 import Image from "next/image";
-import React, { useState } from "react";
+import React from "react";
 import TaskDropDownMenu from "./TaskDropDownMenu";
 
 // IconText Component for displaying an icon and text side-by-side
@@ -65,7 +65,6 @@ type TaskCardProps = {
 };
 
 const TaskCard = ({ task }: TaskCardProps) => {
-    const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const {
         hoursPassed,
         minutesPassed,
