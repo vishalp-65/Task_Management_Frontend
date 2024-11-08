@@ -7,6 +7,7 @@ import PieChart from "../chart/PieChart";
 import { useAnalyticsStore } from "@/store/analyticsStore";
 import BarChart from "../chart/BarChart";
 
+// Reusable StatBox component for statistics display
 const StatBox = ({
     iconSrc,
     label,
@@ -14,7 +15,7 @@ const StatBox = ({
     trend,
     trendValue,
     trendText,
-    customClass,
+    customClass = "font-semibold",
 }: {
     iconSrc: string;
     label: string;
@@ -29,9 +30,7 @@ const StatBox = ({
             <Image src={iconSrc} alt={label} width={20} height={20} />
             <p>{label}</p>
         </div>
-        <p className={`text-3xl font-serif ${customClass || "font-semibold"}`}>
-            {value}
-        </p>
+        <p className={`text-3xl font-serif ${customClass}`}>{value}</p>
         {trend && trendValue !== undefined && (
             <div className="flex gap-1 items-center">
                 <Image src={trend} alt="Trend arrow" width={10} height={10} />
@@ -82,14 +81,13 @@ const Analytics: React.FC = () => {
         isLoading,
         openTasks,
         overdueTasks,
-        brandTasksCount = 0,
-        eventTasksCount = 0,
-        generalTasksCount = 0,
-        inventoryTasksCount = 0,
         fetchAnalyticsState,
+        brandTasksCount,
+        eventTasksCount,
+        generalTasksCount,
+        inventoryTasksCount,
     } = useAnalyticsStore();
 
-    // Memoize chart data to update only when counts change
     const chartData = useMemo(
         () => [
             {
@@ -132,7 +130,7 @@ const Analytics: React.FC = () => {
     if (isLoading) return <p>Loading...</p>;
 
     return (
-        <div className="bg-gray-100 text-nowrap rounded-2xl text-black m-3 h-36 p-4">
+        <div className="bg-gray-100 rounded-2xl text-black m-3 h-36 p-4">
             <div className="flex items-center justify-evenly h-full">
                 <StatBox
                     iconSrc="/svg/cube.svg"
@@ -156,20 +154,16 @@ const Analytics: React.FC = () => {
                     openTasks={openTasks}
                     completedTasks={completedTasks}
                 />
-
                 <div className="h-[60%] w-px bg-gray-300" />
                 <StatBox
                     iconSrc="/svg/cube.svg"
                     label="SLA breached tasks"
-                    value={`${overdueTasks > 0 ? overdueTasks : "No breaches"}`}
-                    trend={null}
+                    value={overdueTasks || "No Breaches"}
                     customClass={`${
-                        overdueTasks > 0
+                        overdueTasks
                             ? "text-red-500 font-semibold"
                             : "text-gray-500/70"
                     }`}
-                    trendValue={null}
-                    trendText=""
                 />
                 <div className="h-[60%] w-px bg-gray-300" />
                 <div className="flex items-center">
