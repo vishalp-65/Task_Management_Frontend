@@ -11,10 +11,16 @@ import {
 type FilterItemProps = {
     label: string;
     data: any[] | null;
-    type: "user" | "brand" | "inventory" | "event";
+    type: "user" | "brand" | "inventory" | "event" | "sort";
+    renderImg?: boolean;
 };
 
-const FilterItem: React.FC<FilterItemProps> = ({ label, data, type }) => {
+const FilterItem: React.FC<FilterItemProps> = ({
+    label,
+    data,
+    type,
+    renderImg,
+}) => {
     const getItemDisplayName = (item: any) => {
         switch (type) {
             case "brand":
@@ -25,6 +31,8 @@ const FilterItem: React.FC<FilterItemProps> = ({ label, data, type }) => {
                 return item.name;
             case "event":
                 return item.name;
+            case "sort":
+                return item.label;
             default:
                 return "";
         }
@@ -32,34 +40,43 @@ const FilterItem: React.FC<FilterItemProps> = ({ label, data, type }) => {
 
     return (
         <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-                <div className="flex justify-between items-center px-[16px] pb-[12px] cursor-pointer">
-                    <p className="text-[14px] font-medium leading-[20px]">
-                        {label}
-                    </p>
-                    <Image
-                        src="/svg/arrow-right.svg"
-                        alt="arrow right"
-                        width={20}
-                        height={20}
-                    />
+            <DropdownMenuSubTrigger className="hover:border-gray-800 hover:rounded-xl">
+                <div className="bg-taskContainer_dark cursor-pointer h-[54px] flex items-center justify-between rounded-xl py-2 px-4">
+                    <p>{label}</p>
+                    <div className="flex items-center">
+                        {renderImg && (
+                            <>
+                                <Image
+                                    src="/svg/avatars.svg"
+                                    alt="avatar"
+                                    width={25}
+                                    height={25}
+                                />
+                                <p className="text-blue mx-2">+4</p>
+                            </>
+                        )}
+                        <Image
+                            src="/svg/arrow-right.svg"
+                            alt="arrow right"
+                            width={20}
+                            height={20}
+                        />
+                    </div>
                 </div>
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
-                <DropdownMenuSubContent className="w-[200px] h-[290px] overflow-auto flex flex-col bg-[#F9FAFB] rounded-[8px] p-[8px] mt-[4px] shadow-lg">
+                <DropdownMenuSubContent className="w-[250px] px-2 py-1 rounded-xl bg-taskContainer_dark text-white border-none m-3">
                     {data ? (
-                        data.map((item) => (
+                        data.map((item: any) => (
                             <p
                                 key={item.id}
-                                className="text-[14px] leading-[20px] text-[#1D1E2C] cursor-pointer hover:bg-gray-100 p-[8px] rounded-[4px]"
+                                className="leading-[20px] cursor-pointer hover:bg-transparent/85 rounded-lg p-2"
                             >
                                 {getItemDisplayName(item)}
                             </p>
                         ))
                     ) : (
-                        <p className="text-[14px] text-[#667085] p-[8px]">
-                            No data found
-                        </p>
+                        <p className="p-2 text-gray-300">No {type} found</p>
                     )}
                 </DropdownMenuSubContent>
             </DropdownMenuPortal>

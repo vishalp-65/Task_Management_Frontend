@@ -1,4 +1,5 @@
-// src/store/taskStore.ts
+// src/store/filterStore.ts
+import { create } from "zustand";
 import {
     fetchAllUsers,
     fetchBrands,
@@ -6,21 +7,16 @@ import {
     fetchInventories,
     fetchTeamUsers,
 } from "@/services/filter.service";
-import { create } from "zustand";
 
-export interface UserState {
+interface UserState {
     isLoading: boolean;
     error: string | null;
-    allUsers: any | null;
-    teamUser: any | null;
-    brands: any | null;
-    inventories: any | null;
-    events: any | null;
-    fetchTeamUsers: () => Promise<any>;
-    fetchAllUsers: () => Promise<any>;
-    fetchBrands: () => Promise<any>;
-    fetchInventories: () => Promise<any>;
-    fetchEvents: () => Promise<any>;
+    allUsers: any[] | null;
+    teamUser: any[] | null;
+    brands: any[] | null;
+    inventories: any[] | null;
+    events: any[] | null;
+    fetchAllData: () => Promise<void>;
 }
 
 export const useUserStore = create<UserState>((set) => ({
@@ -32,79 +28,28 @@ export const useUserStore = create<UserState>((set) => ({
     inventories: null,
     events: null,
 
-    fetchAllUsers: async () => {
+    fetchAllData: async () => {
         set({ isLoading: true });
         try {
-            const res = await fetchAllUsers();
-            set(() => ({
-                allUsers: res.data,
-                isLoading: false,
-            }));
-            return true;
-        } catch (err: any) {
-            set({ error: err.message, isLoading: false });
-            return false;
-        }
-    },
+            const [users, teams, brands, inventories, events] =
+                await Promise.all([
+                    fetchAllUsers(),
+                    fetchTeamUsers(),
+                    fetchBrands(),
+                    fetchInventories(),
+                    fetchEvents(),
+                ]);
 
-    fetchTeamUsers: async () => {
-        set({ isLoading: true });
-        try {
-            const res = await fetchTeamUsers();
-            console.log("res team", res.data);
-            set(() => ({
-                teamUser: res.data,
+            set({
+                allUsers: users.data,
+                teamUser: teams.data,
+                brands: brands.data,
+                inventories: inventories.data,
+                events: events.data,
                 isLoading: false,
-            }));
-            return true;
+            });
         } catch (err: any) {
             set({ error: err.message, isLoading: false });
-            return false;
-        }
-    },
-    fetchBrands: async () => {
-        set({ isLoading: true });
-        try {
-            const res = await fetchBrands();
-            console.log("res brands", res.data);
-            set(() => ({
-                brands: res.data,
-                isLoading: false,
-            }));
-            return true;
-        } catch (err: any) {
-            set({ error: err.message, isLoading: false });
-            return false;
-        }
-    },
-    fetchInventories: async () => {
-        set({ isLoading: true });
-        try {
-            const res = await fetchInventories();
-            console.log("res inventory", res.data);
-            set(() => ({
-                inventories: res.data,
-                isLoading: false,
-            }));
-            return true;
-        } catch (err: any) {
-            set({ error: err.message, isLoading: false });
-            return false;
-        }
-    },
-    fetchEvents: async () => {
-        set({ isLoading: true });
-        try {
-            const res = await fetchEvents();
-            console.log("res events", res.data);
-            set(() => ({
-                events: res.data,
-                isLoading: false,
-            }));
-            return true;
-        } catch (err: any) {
-            set({ error: err.message, isLoading: false });
-            return false;
         }
     },
 }));
