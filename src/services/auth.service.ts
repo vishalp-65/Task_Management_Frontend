@@ -1,5 +1,5 @@
 // src/services/authService.ts
-import apiClient from "./api";
+import apiClient from "@/api/api";
 
 export const loginUser = async (email: string, password: string) => {
     return await apiClient.post<{ data: any }>("auth/login", {

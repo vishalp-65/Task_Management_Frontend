@@ -1,5 +1,5 @@
 // src/services/taskService.ts
-import apiClient from "./api";
+import apiClient from "@/api/api";
 
 export const fetchAnalytics = async (
     timeframe:

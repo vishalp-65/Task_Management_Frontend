@@ -1,5 +1,6 @@
 // src/services/taskService.ts
-import apiClient from "./api";
+
+import apiClient from "@/api/api";
 
 export const fetchTasks = async (filters: {
     sortBy?: string;

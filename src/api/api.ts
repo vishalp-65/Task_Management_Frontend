@@ -1,7 +1,7 @@
 // src/services/api.ts
 import { config, getToken } from "@/config/env_config";
+import { catchAsync } from "@/util/catchAsync";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { catchAsync } from "./catchAsync";
 
 class ApiClient {
     private axiosInstance: AxiosInstance;
