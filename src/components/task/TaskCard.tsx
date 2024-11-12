@@ -75,6 +75,8 @@ const TaskCard = ({ task }: TaskCardProps) => {
         minutesLate,
     } = calculateTimePassed(task.created_at, task.due_date);
 
+    // console.log("task1", task);
+
     return (
         <div className="bg-white rounded-2xl w-[400px] h-[236px] m-2 p-4 text-black flex flex-col justify-between">
             {/* Task Header */}
@@ -99,7 +101,7 @@ const TaskCard = ({ task }: TaskCardProps) => {
                         />
                     )}
 
-                    <TaskDropDownMenu />
+                    <TaskDropDownMenu task={task} />
                 </div>
             </div>
 

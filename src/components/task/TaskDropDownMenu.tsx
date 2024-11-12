@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -7,10 +7,20 @@ import {
     DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import Image from "next/image";
+import { Task } from "@/types/types";
+import { useTaskStore } from "@/store/taskStore";
 
-type Props = {};
+type Props = {
+    task: Task;
+};
 
-const TaskDropDownMenu = ({}: Props) => {
+const TaskDropDownMenu = ({ task }: Props) => {
+    const { deleteTask, error, fetchTaskList } = useTaskStore();
+
+    useEffect(() => {
+        // fetchTaskList();
+    });
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -75,7 +85,7 @@ const TaskDropDownMenu = ({}: Props) => {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => deleteTask(task?.id)}>
                     <Image
                         src="/svg/trash.svg"
                         alt="delete"

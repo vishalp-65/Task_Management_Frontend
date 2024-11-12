@@ -53,6 +53,26 @@ class ApiClient {
             return response.data;
         });
     }
+
+    // Generic PUT method with error handling
+    async put<T>(
+        url: string,
+        data: any,
+        config?: AxiosRequestConfig
+    ): Promise<T> {
+        return await catchAsync(async () => {
+            const response = await this.axiosInstance.put<T>(url, data, config);
+            return response.data;
+        });
+    }
+
+    // Generic DELETE method with error handling
+    async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+        return await catchAsync(async () => {
+            const response = await this.axiosInstance.delete<T>(url, config);
+            return response.data;
+        });
+    }
 }
 
 // Instantiate the API client

@@ -19,23 +19,29 @@ const FilterContainer = () => {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [activeButton, setActiveButton] = useState(0);
     const [filters, setFilters] = useState({
-        taskType: "All",
+        taskType: "all",
         assignedTo: "",
         assignedBy: "",
-        dueDate: "All",
-        sortBy: "",
+        dueDate: "all",
+        sortBy: "title",
+        order: "asc",
     });
 
     const categories = [
-        "All",
-        "General Service",
-        "Brand",
-        "Event",
-        "Inventory",
+        { label: "All", value: "all" },
+        { label: "General Service", value: "general" },
+        { label: "Brand", value: "brand" },
+        { label: "Event", value: "event" },
+        { label: "Inventory", value: "inventory" },
     ];
 
     const handleFilterChange = async (field: string, value: string) => {
-        setFilters((prev) => ({ ...prev, [field]: value }));
+        // value = value.split(" ")[0].toLowerCase();
+        console.log(filters);
+        setFilters((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
         await fetchTaskList({ ...filters, [field]: value });
     };
 
@@ -87,35 +93,47 @@ const FilterContainer = () => {
                         <div className="space-y-2">
                             {/* Grid layout for buttons */}
                             <div className="grid grid-cols-2 gap-2">
-                                {categories.slice(0, 2).map((label, index) => (
-                                    <p
-                                        key={index}
-                                        onClick={() => setActiveButton(index)}
-                                        className={`py-1.5 px-1 text-center w-full rounded-xl cursor-pointer ${
-                                            activeButton === index
-                                                ? "bg-white text-black"
-                                                : "bg-[#1B1E25] text-gray-300"
-                                        }`}
-                                    >
-                                        {label}
-                                    </p>
-                                ))}
+                                {categories
+                                    .slice(0, 2)
+                                    .map((category, index) => (
+                                        <p
+                                            key={index}
+                                            onClick={() => {
+                                                setActiveButton(index);
+                                                handleFilterChange(
+                                                    "taskBased",
+                                                    category.value
+                                                );
+                                            }}
+                                            className={`py-1.5 px-1 text-center w-full rounded-xl cursor-pointer ${
+                                                activeButton === index
+                                                    ? "bg-white text-black"
+                                                    : "bg-[#1B1E25] text-gray-300"
+                                            }`}
+                                        >
+                                            {category.label}
+                                        </p>
+                                    ))}
                             </div>
 
                             <div className="grid grid-cols-3 gap-2">
-                                {categories.slice(2).map((label, index) => (
+                                {categories.slice(2).map((category, index) => (
                                     <p
                                         key={index + 2} // Adjust the key for the second slice
-                                        onClick={() =>
-                                            setActiveButton(index + 2)
-                                        }
+                                        onClick={() => {
+                                            setActiveButton(index + 2);
+                                            handleFilterChange(
+                                                "taskBased",
+                                                category.value
+                                            );
+                                        }}
                                         className={`py-1.5 px-1 text-center w-full rounded-xl cursor-pointer ${
                                             activeButton === index + 2
                                                 ? "bg-white text-black"
                                                 : "bg-[#1B1E25] text-gray-300"
                                         }`}
                                     >
-                                        {label}
+                                        {category.label}
                                     </p>
                                 ))}
                             </div>
@@ -127,6 +145,8 @@ const FilterContainer = () => {
                         type="user"
                         data={allUsers}
                         label="Assigned By"
+                        filterType="assignedBy"
+                        handleFilterChange={handleFilterChange}
                         renderImg
                     />
 
@@ -135,6 +155,8 @@ const FilterContainer = () => {
                         type="user"
                         data={allUsers}
                         label="Assigned To"
+                        filterType="assignedTo"
+                        handleFilterChange={handleFilterChange}
                         renderImg
                     />
 
@@ -143,21 +165,37 @@ const FilterContainer = () => {
                         type="user"
                         data={teamUser}
                         label="Team Owners"
+                        filterType="teamOwner"
+                        handleFilterChange={handleFilterChange}
                         renderImg
                     />
 
                     {/* Brands */}
-                    <FilterItem type="brand" data={brands} label="Brands" />
+                    <FilterItem
+                        type="brand"
+                        data={brands}
+                        label="Brands"
+                        filterType="brandName"
+                        handleFilterChange={handleFilterChange}
+                    />
 
                     {/* Inventories */}
                     <FilterItem
                         type="inventory"
                         data={inventories}
                         label="Inventories"
+                        filterType="inventoryName"
+                        handleFilterChange={handleFilterChange}
                     />
 
                     {/* Events */}
-                    <FilterItem type="event" data={events} label="Events" />
+                    <FilterItem
+                        type="event"
+                        data={events}
+                        label="Events"
+                        filterType="eventName"
+                        handleFilterChange={handleFilterChange}
+                    />
 
                     {/* Due Date Filter */}
                     <div className="bg-taskContainer_dark rounded-xl py-3 px-4 space-y-3.5">
@@ -180,7 +218,7 @@ const FilterContainer = () => {
                                             : "bg-[#1B1E25]"
                                     }`}
                                     onClick={() =>
-                                        handleFilterChange("dueDate", date)
+                                        handleFilterChange("status", date)
                                     }
                                 >
                                     {date}
@@ -194,6 +232,8 @@ const FilterContainer = () => {
                         type="sort"
                         data={sortByValues}
                         label="Sort by"
+                        filterType="sortBy"
+                        handleFilterChange={handleFilterChange}
                     />
                 </div>
             </DropdownMenuContent>

@@ -1,5 +1,5 @@
 // src/store/taskStore.ts
-import { createTask, fetchTasks } from "@/services/task.service";
+import { createTask, deleteTask, fetchTasks } from "@/services/task.service";
 import { Task } from "@/types/types";
 import { create } from "zustand";
 
@@ -16,6 +16,8 @@ export interface TaskState {
         dueDate?: string;
         page?: number;
         limit?: number;
+        order?: string;
+        status?: string;
     }) => Promise<boolean>;
     addTask: (taskData: {
         title: string;
@@ -24,6 +26,8 @@ export interface TaskState {
         due_date: string;
         assigneeId: string;
     }) => Promise<boolean>;
+
+    deleteTask: (taskId: string) => Promise<any>;
 }
 
 export const useTaskStore = create<TaskState>((set) => ({
@@ -56,6 +60,17 @@ export const useTaskStore = create<TaskState>((set) => ({
                 tasks: state.tasks ? [res.data, ...state.tasks] : [res.data],
                 isLoading: false,
             }));
+            return true;
+        } catch (err: any) {
+            set({ error: err.message, isLoading: false });
+            return false;
+        }
+    },
+    deleteTask: async (taskId: string) => {
+        set({ isLoading: true });
+        try {
+            await deleteTask(taskId);
+
             return true;
         } catch (err: any) {
             set({ error: err.message, isLoading: false });
