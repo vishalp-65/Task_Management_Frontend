@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,11 +15,7 @@ type Props = {
 };
 
 const TaskDropDownMenu = ({ task }: Props) => {
-    const { deleteTask, error, fetchTaskList } = useTaskStore();
-
-    useEffect(() => {
-        // fetchTaskList();
-    });
+    const { deleteTask } = useTaskStore();
 
     return (
         <DropdownMenu>

@@ -1,6 +1,10 @@
 // src/components/TaskCard.tsx
 import { Task } from "@/types/types";
-import { calculateTimePassed, capitalizeFirstLetter } from "@/util/helper";
+import {
+    calculateTimePassed,
+    capitalizeFirstLetter,
+    truncateText,
+} from "@/util/helper";
 import Image from "next/image";
 import React from "react";
 import TaskDropDownMenu from "./TaskDropDownMenu";
@@ -56,9 +60,6 @@ const ProgressBar = ({ progress }: { progress: number }) => (
         />
     </div>
 );
-
-const truncateText = (text: string, maxLength: number) =>
-    text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
 
 type TaskCardProps = {
     task: Task;

@@ -1,5 +1,5 @@
 // FilterItem.tsx
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import Image from "next/image";
 import {
     DropdownMenuSub,
@@ -8,13 +8,14 @@ import {
     DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { truncateText } from "@/util/helper";
 
 type FilterItemProps = {
     label: string;
     data: any[] | null;
-    type: "user" | "brand" | "inventory" | "event" | "sort";
+    type: string;
     filterType: string;
-    handleFilterChange: (field: string, value: string) => {};
+    handleFilterChange: (field: string, value: string) => void;
     renderImg?: boolean;
 };
 
@@ -27,53 +28,55 @@ const FilterItem: React.FC<FilterItemProps> = ({
     renderImg,
 }) => {
     const [searchValue, setSearchValue] = useState("");
-    const [selectedFilterValue, setSelectedFilterValue] =
-        useState<string>("None");
+    const [selectedFilterValue, setSelectedFilterValue] = useState("None");
 
-    // Function to get the display name based on the type
-    const getItemDisplayName = (item: any) => {
-        switch (type) {
-            case "brand":
-                return item.brand_name;
-            case "user":
-                return item.user_name;
-            case "inventory":
-                return item.name;
-            case "event":
-                return item.name;
-            case "sort":
-                return item.label;
-            default:
-                return "";
-        }
+    const getItemDisplayName = useCallback(
+        (item: any) => {
+            switch (type) {
+                case "brand":
+                    return item.brand_name;
+                case "user":
+                    return item.user_name;
+                case "inventory":
+                case "event":
+                    return item.name;
+                case "sort":
+                    return item.label;
+                default:
+                    return "";
+            }
+        },
+        [type]
+    );
+
+    const filteredData = useMemo(
+        () =>
+            data?.filter((item) =>
+                getItemDisplayName(item)
+                    .toLowerCase()
+                    .includes(searchValue.toLowerCase())
+            ),
+        [data, searchValue, getItemDisplayName]
+    );
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchValue(e.target.value);
     };
 
     const handleFilterSelect = (value: string) => {
         handleFilterChange(filterType, value);
-        setSelectedFilterValue(value);
-    };
-
-    // Filter the data based on the search value
-    const filteredData = data?.filter((item) =>
-        getItemDisplayName(item)
-            .toLowerCase()
-            .includes(searchValue.toLowerCase())
-    );
-
-    // Handle input change for search
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchValue(e.target.value);
+        setSelectedFilterValue(value || "None");
     };
 
     return (
         <DropdownMenuSub>
             <DropdownMenuSubTrigger className="hover:border-gray-800 hover:rounded-xl">
                 <div className="bg-taskContainer_dark cursor-pointer h-[54px] flex items-center justify-between rounded-xl py-2 px-4">
-                    <div className="space-y-0.5">
+                    <div>
                         <p>{label}</p>
                         {selectedFilterValue !== "None" && (
                             <p className="text-sm text-gray-400">
-                                {selectedFilterValue}
+                                {truncateText(selectedFilterValue, 30)}
                             </p>
                         )}
                     </div>
@@ -105,16 +108,14 @@ const FilterItem: React.FC<FilterItemProps> = ({
                         value={searchValue}
                         onChange={handleInputChange}
                         placeholder={`Search ${label.toLowerCase()}...`}
-                        className="bg-slate-700 placeholder:text-gray-400 py-1"
+                        className="bg-slate-700 placeholder:text-gray-400 py-1 mb-2"
                     />
-                    {data && (
-                        <p
-                            className="leading-[20px] cursor-pointer hover:bg-transparent/85 rounded-lg p-2"
-                            onClick={() => handleFilterSelect("")}
-                        >
-                            None
-                        </p>
-                    )}
+                    <p
+                        className="leading-[20px] cursor-pointer hover:bg-transparent/85 rounded-lg p-2"
+                        onClick={() => handleFilterSelect("")}
+                    >
+                        None
+                    </p>
                     <ul>
                         {filteredData && filteredData.length > 0 ? (
                             filteredData.map((item) => (

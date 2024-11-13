@@ -66,3 +66,11 @@ export const sortByValues = [
         sortBy: "created_At",
     },
 ];
+
+export const categories = [
+    { label: "All", value: "all" },
+    { label: "General Service", value: "general" },
+    { label: "Brand", value: "brand" },
+    { label: "Event", value: "event" },
+    { label: "Inventory", value: "inventory" },
+];

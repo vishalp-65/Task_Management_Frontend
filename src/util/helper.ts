@@ -116,3 +116,6 @@ export function capitalizeFirstLetter(str: string): string {
     if (!str) return str; // Handle empty string or undefined
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+export const truncateText = (text: string, maxLength: number) =>
+    text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
