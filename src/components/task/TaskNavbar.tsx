@@ -7,6 +7,7 @@ import { useTaskStore } from "@/store/taskStore";
 import IconWithButton from "../reusable/IconWithButton";
 import { capitalizeFirstLetter } from "@/util/helper";
 import AddNewTaskModal from "./AddNewTaskModal";
+import FilterContainer from "./filter/FilterContainer";
 
 type Props = {
     currentTaskStatus: "open" | "completed";
@@ -89,11 +90,7 @@ const TaskNavbar: React.FC<Props> = ({
                         handleClick={handleSearchClick} // Focus input when icon is clicked
                     />
                 )}
-                <IconWithButton
-                    src={"/svg/filter.svg"}
-                    alt="filter"
-                    customClassName="bg-[#23252D] border border-[#50515B]"
-                />
+                <FilterContainer />
                 <AddNewTaskModal />
             </div>
         </div>

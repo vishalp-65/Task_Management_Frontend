@@ -33,3 +33,44 @@ export const defaultDataForChart = [
     { label: "C", value: 13, name: "Event Related", color: "#09949F" },
     { label: "D", value: 5, name: "Inventory Related", color: "#38C6D2" },
 ];
+
+export const sortByValues = [
+    {
+        label: "Alphabetical Order (A-Z)",
+        orderBy: "asc",
+        sortBy: "title",
+    },
+    {
+        label: "Alphabetical Order (Z-A)",
+        orderBy: "desc",
+        sortBy: "title",
+    },
+    {
+        label: "Due Date (Soonest First)",
+        orderBy: "asc",
+        sortBy: "due_date",
+    },
+    {
+        label: "Due Date (Farthest First)",
+        orderBy: "desc",
+        sortBy: "due_date",
+    },
+    {
+        label: "Newest Created",
+        orderBy: "desc",
+        sortBy: "created_At",
+    },
+    {
+        label: "Oldest Created",
+        orderBy: "asc",
+        sortBy: "created_At",
+    },
+];
+
+export const categories = [
+    { label: "All", value: "all" },
+    { label: "General Service", value: "general" },
+    { label: "Brand", value: "brand" },
+    { label: "Event", value: "event" },
+    { label: "Inventory", value: "inventory" },
+];

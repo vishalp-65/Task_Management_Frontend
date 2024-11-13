@@ -15,7 +15,11 @@ const Tasks = () => {
 
     // Fetch tasks for the current page with filters
     useEffect(() => {
-        fetchTaskList({ page: currentPage, limit: tasksPerPage });
+        fetchTaskList({
+            page: currentPage,
+            limit: tasksPerPage,
+            sortBy: "created_at",
+        });
     }, [fetchTaskList, currentPage]);
 
     const totalPages = Math.ceil(totalTasks / tasksPerPage);

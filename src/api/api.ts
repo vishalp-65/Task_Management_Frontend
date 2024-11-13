@@ -1,7 +1,7 @@
 // src/services/api.ts
 import { config, getToken } from "@/config/env_config";
+import { catchAsync } from "@/util/catchAsync";
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { catchAsync } from "./catchAsync";
 
 class ApiClient {
     private axiosInstance: AxiosInstance;
@@ -50,6 +50,26 @@ class ApiClient {
                 data,
                 config
             );
+            return response.data;
+        });
+    }
+
+    // Generic PUT method with error handling
+    async put<T>(
+        url: string,
+        data: any,
+        config?: AxiosRequestConfig
+    ): Promise<T> {
+        return await catchAsync(async () => {
+            const response = await this.axiosInstance.put<T>(url, data, config);
+            return response.data;
+        });
+    }
+
+    // Generic DELETE method with error handling
+    async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+        return await catchAsync(async () => {
+            const response = await this.axiosInstance.delete<T>(url, config);
             return response.data;
         });
     }

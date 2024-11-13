@@ -1,5 +1,6 @@
 // src/services/taskService.ts
-import apiClient from "./api";
+
+import apiClient from "@/api/api";
 
 export const fetchTasks = async (filters: {
     sortBy?: string;
@@ -15,7 +16,10 @@ export const fetchTasks = async (filters: {
     const query = new URLSearchParams(
         filters as Record<string, string>
     ).toString();
-    return await apiClient.get<{ data: any }>(`tasks?${query}`);
+    console.log("query is ", query);
+    const res = await apiClient.get<{ data: any }>(`tasks?${query}`);
+    console.log("res", res);
+    return res;
 };
 
 export const createTask = async (taskData: {
@@ -26,4 +30,8 @@ export const createTask = async (taskData: {
     assigneeId: string;
 }) => {
     return await apiClient.post<{ data: any }>("tasks", taskData);
+};
+
+export const deleteTask = async (taskId: string) => {
+    return await apiClient.delete<{ data: any }>(`tasks/${taskId}`);
 };
