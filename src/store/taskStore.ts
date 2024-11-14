@@ -4,7 +4,7 @@ import { Task } from "@/types/types";
 import { create } from "zustand";
 
 export interface TaskState {
-    tasks: Task[] | null;
+    tasks: Task[];
     totalTasks: number;
     isLoading: boolean;
     error: string | null;
@@ -18,7 +18,7 @@ export interface TaskState {
         limit?: number;
         order?: string;
         status?: string;
-    }) => Promise<boolean>;
+    }) => Promise<any>;
     addTask: (taskData: {
         title: string;
         description: string;
@@ -27,11 +27,11 @@ export interface TaskState {
         assigneeId: string;
     }) => Promise<boolean>;
 
-    deleteTask: (taskId: string) => Promise<any>;
+    deleteTask: (taskId: string) => Promise<boolean>;
 }
 
 export const useTaskStore = create<TaskState>((set) => ({
-    tasks: null,
+    tasks: [],
     totalTasks: 0,
     isLoading: false,
     error: null,
@@ -45,10 +45,10 @@ export const useTaskStore = create<TaskState>((set) => ({
                 totalTasks: res.data.total,
                 isLoading: false,
             });
-            return true;
+            return res.data.tasks;
         } catch (err: any) {
             set({ error: err.message, isLoading: false });
-            return false;
+            return err;
         }
     },
 
@@ -67,14 +67,15 @@ export const useTaskStore = create<TaskState>((set) => ({
         }
     },
     deleteTask: async (taskId: string) => {
-        set({ isLoading: true });
+        set({ isLoading: true, error: null });
         try {
             await deleteTask(taskId);
-
+            set({ isLoading: false });
             return true;
         } catch (err: any) {
-            set({ error: err.message, isLoading: false });
-            return false;
+            const errorMessage = err || "Failed to delete task";
+            set({ error: errorMessage, isLoading: false });
+            return errorMessage;
         }
     },
 }));

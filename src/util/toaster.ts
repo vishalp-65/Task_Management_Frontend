@@ -1,11 +1,21 @@
-// src/utils/toaster.ts
+// src/hooks/useErrorToast.ts
+import { useToast } from "@/hooks/use-toast";
 
-export const toaster = (toast: any) => {
-    return (title: string, description?: string) => {
-        console.log("Toasted");
+export const useErrorToast = () => {
+    const { toast } = useToast();
+
+    const showErrorToast = (error: any) => {
+        const errorMessage =
+            error?.response?.data?.message ||
+            error?.message ||
+            "Something went wrong. Please try again.";
+
         toast({
-            title,
-            description,
+            title: "Error",
+            description: errorMessage,
+            variant: "destructive",
         });
     };
+
+    return showErrorToast;
 };

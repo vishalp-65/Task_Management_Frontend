@@ -69,8 +69,18 @@ const FilterContainer = () => {
     ];
 
     const handleFilterChange = useCallback(
-        async (field: string, value: string) => {
-            const updatedFilters = { ...filters, [field]: value };
+        async (
+            field: string,
+            value: string | { sortBy: string; order: string }
+        ) => {
+            const updatedFilters =
+                field === "sortBy" &&
+                typeof value === "object" &&
+                "sortBy" in value &&
+                "order" in value
+                    ? { ...filters, sortBy: value.sortBy, order: value.order }
+                    : { ...filters, [field]: value };
+
             setFilters(updatedFilters);
             await fetchTaskList(updatedFilters);
         },

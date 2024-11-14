@@ -9,13 +9,28 @@ import {
 import Image from "next/image";
 import { Task } from "@/types/types";
 import { useTaskStore } from "@/store/taskStore";
+import { useToast } from "@/hooks/use-toast";
 
 type Props = {
     task: Task;
 };
 
 const TaskDropDownMenu = ({ task }: Props) => {
+    const { toast } = useToast();
     const { deleteTask } = useTaskStore();
+
+    const handleDelete = async (id: string) => {
+        const result = await deleteTask(id);
+
+        if (result !== true) {
+            // If result is not `true`, it’s an error message
+            toast({
+                title: "Task not deleted",
+                description: result, // Show the returned error message
+                variant: "destructive",
+            });
+        }
+    };
 
     return (
         <DropdownMenu>
@@ -81,7 +96,7 @@ const TaskDropDownMenu = ({ task }: Props) => {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem onClick={() => deleteTask(task?.id)}>
+                <DropdownMenuItem onClick={() => handleDelete(task.id)}>
                     <Image
                         src="/svg/trash.svg"
                         alt="delete"
