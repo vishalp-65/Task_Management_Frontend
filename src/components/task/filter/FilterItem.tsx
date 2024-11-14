@@ -15,7 +15,10 @@ type FilterItemProps = {
     data: any[] | null;
     type: string;
     filterType: string;
-    handleFilterChange: (field: string, value: string) => void;
+    handleFilterChange: (
+        field: string,
+        value: string | { sortBy: string; order: string }
+    ) => void;
     renderImg?: boolean;
 };
 
@@ -63,10 +66,25 @@ const FilterItem: React.FC<FilterItemProps> = ({
         setSearchValue(e.target.value);
     };
 
-    const handleFilterSelect = (value: string) => {
-        handleFilterChange(filterType, value);
-        setSelectedFilterValue(value || "None");
-    };
+    const handleFilterSelect = useCallback(
+        (value: string, item?: any) => {
+            console.log("filterType", filterType);
+
+            // Prepare a single call payload for "sortBy"
+            if (filterType === "sortBy" && item) {
+                const sortPayload = {
+                    sortBy: item.sortBy,
+                    order: item.orderBy,
+                };
+                handleFilterChange(filterType, sortPayload);
+            } else {
+                handleFilterChange(filterType, value);
+            }
+
+            setSelectedFilterValue(value || "None");
+        },
+        [filterType, selectedFilterValue, handleFilterChange]
+    );
 
     return (
         <DropdownMenuSub>
@@ -102,7 +120,7 @@ const FilterItem: React.FC<FilterItemProps> = ({
                 </div>
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
-                <DropdownMenuSubContent className="w-[250px] px-2 py-2 rounded-xl bg-taskContainer_dark text-white border-none m-3">
+                <DropdownMenuSubContent className="w-[250px] max-h-[500px] overflow-y-auto px-2 py-2 rounded-xl bg-taskContainer_dark text-white border-none m-3">
                     <Input
                         type="text"
                         value={searchValue}
@@ -110,31 +128,32 @@ const FilterItem: React.FC<FilterItemProps> = ({
                         placeholder={`Search ${label.toLowerCase()}...`}
                         className="bg-slate-700 placeholder:text-gray-400 py-1 mb-2"
                     />
-                    <p
-                        className="leading-[20px] cursor-pointer hover:bg-transparent/85 rounded-lg p-2"
-                        onClick={() => handleFilterSelect("")}
-                    >
-                        None
-                    </p>
-                    <ul>
-                        {filteredData && filteredData.length > 0 ? (
-                            filteredData.map((item) => (
-                                <li
-                                    key={item.id}
-                                    className="leading-[20px] cursor-pointer hover:bg-transparent/85 rounded-lg p-2"
-                                    onClick={() =>
-                                        handleFilterSelect(
-                                            getItemDisplayName(item)
-                                        )
-                                    }
-                                >
-                                    {getItemDisplayName(item)}
-                                </li>
-                            ))
-                        ) : (
-                            <p className="p-2 text-gray-300">No {type} found</p>
-                        )}
-                    </ul>
+                    {data && (
+                        <p
+                            className="leading-[20px] text-gray-400 cursor-pointer hover:bg-transparent/85 rounded-lg p-2"
+                            onClick={() => handleFilterSelect("")}
+                        >
+                            None
+                        </p>
+                    )}
+                    {filteredData && filteredData.length > 0 ? (
+                        filteredData.map((item) => (
+                            <p
+                                key={item.id}
+                                className="leading-[20px] cursor-pointer hover:bg-transparent/85 rounded-lg p-2"
+                                onClick={() =>
+                                    handleFilterSelect(
+                                        getItemDisplayName(item),
+                                        item
+                                    )
+                                }
+                            >
+                                {getItemDisplayName(item)}
+                            </p>
+                        ))
+                    ) : (
+                        <p className="p-2 text-gray-300">No {type} found</p>
+                    )}
                 </DropdownMenuSubContent>
             </DropdownMenuPortal>
         </DropdownMenuSub>

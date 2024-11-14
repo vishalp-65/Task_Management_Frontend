@@ -58,12 +58,12 @@ export const sortByValues = [
     {
         label: "Newest Created",
         orderBy: "desc",
-        sortBy: "created_At",
+        sortBy: "created_at",
     },
     {
         label: "Oldest Created",
         orderBy: "asc",
-        sortBy: "created_At",
+        sortBy: "created_at",
     },
 ];
 
