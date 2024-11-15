@@ -66,6 +66,22 @@ class ApiClient {
         });
     }
 
+    // Generic PUT method with error handling
+    async patch<T>(
+        url: string,
+        data: any,
+        config?: AxiosRequestConfig
+    ): Promise<T> {
+        return await catchAsync(async () => {
+            const response = await this.axiosInstance.patch<T>(
+                url,
+                data,
+                config
+            );
+            return response.data;
+        });
+    }
+
     // Generic DELETE method with error handling
     async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
         return await catchAsync(async () => {
