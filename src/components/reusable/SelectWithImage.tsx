@@ -21,6 +21,7 @@ type DropdownProps = {
     items: DropdownItem[];
     className?: string;
     onSelect?: (value: string) => void;
+    handleTaskType: (type: string) => void;
 };
 
 const CustomSelect: React.FC<DropdownProps> = ({
@@ -28,6 +29,7 @@ const CustomSelect: React.FC<DropdownProps> = ({
     placeHolderImage,
     items,
     className = "",
+    handleTaskType,
     onSelect,
 }) => {
     const [selectedValue, setSelectedValue] = useState<string | null>(null);
@@ -35,6 +37,7 @@ const CustomSelect: React.FC<DropdownProps> = ({
     // Handle selection change
     const handleSelectChange = (value: string) => {
         setSelectedValue(value);
+        handleTaskType(value);
         if (onSelect) onSelect(value); // Optional callback
     };
 

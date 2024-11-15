@@ -6,6 +6,7 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuPortal,
     DropdownMenuSubContent,
+    DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { truncateText } from "@/util/helper";
@@ -83,7 +84,12 @@ const FilterItem: React.FC<FilterItemProps> = ({
 
             setSelectedFilterValue(value || "None");
         },
-        [filterType, selectedFilterValue, handleFilterChange]
+        [
+            filterType,
+            selectedFilterValue,
+            handleFilterChange,
+            selectedFilterValue,
+        ]
     );
 
     return (
@@ -138,7 +144,7 @@ const FilterItem: React.FC<FilterItemProps> = ({
                     )}
                     {filteredData && filteredData.length > 0 ? (
                         filteredData.map((item) => (
-                            <p
+                            <DropdownMenuItem
                                 key={item.id}
                                 className="leading-[20px] cursor-pointer hover:bg-transparent/85 rounded-lg p-2"
                                 onClick={() =>
@@ -149,7 +155,7 @@ const FilterItem: React.FC<FilterItemProps> = ({
                                 }
                             >
                                 {getItemDisplayName(item)}
-                            </p>
+                            </DropdownMenuItem>
                         ))
                     ) : (
                         <p className="p-2 text-gray-300">No {type} found</p>

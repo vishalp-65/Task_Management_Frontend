@@ -1,4 +1,5 @@
 // src/store/taskStore.ts
+import { NewTaskData } from "@/components/task/newTask/AddNewTaskModal";
 import { createTask, deleteTask, fetchTasks } from "@/services/task.service";
 import { Task } from "@/types/types";
 import { create } from "zustand";
@@ -19,13 +20,7 @@ export interface TaskState {
         order?: string;
         status?: string;
     }) => Promise<any>;
-    addTask: (taskData: {
-        title: string;
-        description: string;
-        task_type: string;
-        due_date: string;
-        assigneeId: string;
-    }) => Promise<boolean>;
+    addTask: (taskData: NewTaskData) => Promise<boolean>;
 
     deleteTask: (taskId: string) => Promise<boolean>;
 }

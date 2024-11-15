@@ -119,3 +119,60 @@ export function capitalizeFirstLetter(str: string): string {
 
 export const truncateText = (text: string, maxLength: number) =>
     text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
+
+export function formatDate(date: Date): string {
+    // Array of month short forms
+    const monthShorts = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+
+    // Get the month, day, and year
+    const month = monthShorts[date.getMonth()];
+    const day = date.getDate();
+    const year = date.getFullYear();
+
+    // Determine the day suffix (st, nd, rd, th)
+    const suffix = (day: number): string => {
+        if (day >= 11 && day <= 13) {
+            return "th";
+        }
+        switch (day % 10) {
+            case 1:
+                return "st";
+            case 2:
+                return "nd";
+            case 3:
+                return "rd";
+            default:
+                return "th";
+        }
+    };
+
+    // Format and return the date
+    return `${month} ${day}${suffix(day)} ${year}`;
+}
+
+export function formatDateToDMY(date: Date): string {
+    // Get the day, month (0-based, so add 1 to it), and year
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // months are 0-indexed, so add 1
+    const year = date.getFullYear();
+
+    // Format the day and month to be two digits if necessary
+    const formattedDay = day < 10 ? `0${day}` : `${day}`;
+    const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+
+    // Return the date in the "DD/MM/YYYY" format
+    return `${formattedDay}/${formattedMonth}/${year}`;
+}
