@@ -6,7 +6,7 @@ import { Input } from "../ui/input";
 import { useTaskStore } from "@/store/taskStore";
 import IconWithButton from "../reusable/IconWithButton";
 import { capitalizeFirstLetter } from "@/util/helper";
-import AddNewTaskModal from "./AddNewTaskModal";
+import AddNewTaskModal from "./newTask/AddNewTaskModal";
 import FilterContainer from "./filter/FilterContainer";
 
 type Props = {

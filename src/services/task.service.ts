@@ -1,6 +1,7 @@
 // src/services/taskService.ts
 
 import apiClient from "@/api/api";
+import { NewTaskData } from "@/components/task/newTask/AddNewTaskModal";
 
 export const fetchTasks = async (filters: {
     sortBy?: string;
@@ -22,13 +23,7 @@ export const fetchTasks = async (filters: {
     return res;
 };
 
-export const createTask = async (taskData: {
-    title: string;
-    description: string;
-    task_type: string;
-    due_date: string;
-    assigneeId: string;
-}) => {
+export const createTask = async (taskData: NewTaskData) => {
     return await apiClient.post<{ data: any }>("tasks", taskData);
 };
 

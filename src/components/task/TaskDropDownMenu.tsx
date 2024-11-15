@@ -29,6 +29,11 @@ const TaskDropDownMenu = ({ task }: Props) => {
                 description: result, // Show the returned error message
                 variant: "destructive",
             });
+        } else {
+            toast({
+                title: "Task deleted",
+                variant: "default",
+            });
         }
     };
 
