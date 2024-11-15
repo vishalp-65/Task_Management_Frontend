@@ -17,6 +17,18 @@ export interface TaskHistory {
     timestamp: string;
     performed_by: User;
 }
+export interface Brand {
+    id: string;
+    brandName: string;
+}
+export interface Inventory {
+    id: string;
+    inventoryName: string;
+}
+export interface Event {
+    id: string;
+    eventName: string;
+}
 
 // Define Task type
 export interface Task {
@@ -30,8 +42,8 @@ export interface Task {
     updated_at: string;
     creator: User;
     assignee: User;
-    brand: string | null;
-    event: string | null;
-    inventory: string | null;
+    brand: Brand;
+    event: Event;
+    inventory: Inventory;
     history: TaskHistory[];
 }

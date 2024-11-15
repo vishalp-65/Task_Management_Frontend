@@ -1,5 +1,5 @@
 // src/components/TaskNavbar.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TaskTypesItems, TimeFrames } from "@/constant/constant";
 import Dropdown from "../reusable/Dropdown";
 import { Input } from "../ui/input";
@@ -22,13 +22,32 @@ const TaskNavbar: React.FC<Props> = ({
     const [filters, setFilters] = useState<any>({});
     const { fetchTaskList } = useTaskStore();
     const [searchTerm, setSearchTerm] = useState("");
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
 
     const handleSearchClick = () => setIsSearchSelected((prev) => !prev);
 
+    // Debounce effect
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearchTerm(searchTerm);
+        }, 500);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [searchTerm]);
+
+    // Fetch tasks whenever the debounced search term changes
+    useEffect(() => {
+        if (debouncedSearchTerm) {
+            fetchTaskList({ taskName: debouncedSearchTerm });
+        } else {
+            fetchTaskList();
+        }
+    }, [debouncedSearchTerm, fetchTaskList]);
+
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
-        setFilters((prev: any) => ({ ...prev, searchTerm }));
-        fetchTaskList({ ...filters, searchTerm });
     };
 
     const renderStatusButton = (status: "open" | "completed") => (

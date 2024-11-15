@@ -13,6 +13,7 @@ export const fetchTasks = async (filters: {
     teamOwner?: string;
     page?: number;
     limit?: number;
+    taskName?: string;
 }) => {
     const query = new URLSearchParams(
         filters as Record<string, string>
@@ -29,4 +30,11 @@ export const createTask = async (taskData: NewTaskData) => {
 
 export const deleteTask = async (taskId: string) => {
     return await apiClient.delete<{ data: any }>(`tasks/${taskId}`);
+};
+
+export const markAsCompletedTask = async (
+    taskId: string,
+    data: { status: "open" | "in-progress" | "completed" | "overdue" }
+) => {
+    return await apiClient.patch<{ data: any }>(`tasks/${taskId}/status`, data);
 };

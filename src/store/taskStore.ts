@@ -1,6 +1,11 @@
 // src/store/taskStore.ts
 import { NewTaskData } from "@/components/task/newTask/AddNewTaskModal";
-import { createTask, deleteTask, fetchTasks } from "@/services/task.service";
+import {
+    createTask,
+    deleteTask,
+    fetchTasks,
+    markAsCompletedTask,
+} from "@/services/task.service";
 import { Task } from "@/types/types";
 import { create } from "zustand";
 
@@ -19,10 +24,15 @@ export interface TaskState {
         limit?: number;
         order?: string;
         status?: string;
+        taskName?: string;
     }) => Promise<any>;
     addTask: (taskData: NewTaskData) => Promise<boolean>;
 
     deleteTask: (taskId: string) => Promise<boolean>;
+    markAsCompletedTask: (
+        taskId: string,
+        data: { status: "open" | "in-progress" | "completed" | "overdue" }
+    ) => Promise<boolean>;
 }
 
 export const useTaskStore = create<TaskState>((set) => ({
@@ -57,14 +67,30 @@ export const useTaskStore = create<TaskState>((set) => ({
             }));
             return true;
         } catch (err: any) {
-            set({ error: err.message, isLoading: false });
-            return false;
+            const errorMessage = err || "Failed to delete task";
+            set({ error: errorMessage, isLoading: false });
+            return errorMessage;
         }
     },
     deleteTask: async (taskId: string) => {
         set({ isLoading: true, error: null });
         try {
             await deleteTask(taskId);
+            set({ isLoading: false });
+            return true;
+        } catch (err: any) {
+            const errorMessage = err || "Failed to delete task";
+            set({ error: errorMessage, isLoading: false });
+            return errorMessage;
+        }
+    },
+    markAsCompletedTask: async (
+        taskId: string,
+        data: { status: "open" | "in-progress" | "completed" | "overdue" }
+    ) => {
+        set({ isLoading: true, error: null });
+        try {
+            await markAsCompletedTask(taskId, data);
             set({ isLoading: false });
             return true;
         } catch (err: any) {
