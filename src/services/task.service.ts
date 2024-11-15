@@ -13,6 +13,7 @@ export const fetchTasks = async (filters: {
     teamOwner?: string;
     page?: number;
     limit?: number;
+    taskName?: string;
 }) => {
     const query = new URLSearchParams(
         filters as Record<string, string>

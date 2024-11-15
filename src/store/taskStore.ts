@@ -19,6 +19,7 @@ export interface TaskState {
         limit?: number;
         order?: string;
         status?: string;
+        taskName?: string;
     }) => Promise<any>;
     addTask: (taskData: NewTaskData) => Promise<boolean>;
 
