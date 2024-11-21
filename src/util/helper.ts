@@ -176,3 +176,15 @@ export function formatDateToDMY(date: Date): string {
     // Return the date in the "DD/MM/YYYY" format
     return `${formattedDay}/${formattedMonth}/${year}`;
 }
+
+export function countWordsFromCommaSeparatedString(
+    input: string | undefined
+): number {
+    // Split the input string by commas, trim spaces, and filter out empty strings
+    if (!input) return 0;
+    const words = input
+        .split(",")
+        .map((word) => word.trim())
+        .filter((word) => word.length > 0);
+    return words.length;
+}

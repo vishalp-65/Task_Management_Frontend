@@ -12,18 +12,25 @@ import { useUserStore } from "@/store/filterStore";
 import { categories, sortByValues } from "@/constant/constant";
 
 const FilterContainer = () => {
-    const { fetchTaskList } = useTaskStore();
+    const {
+        sortBy,
+        assignedTo,
+        assignedBy,
+        brandName,
+        inventoryName,
+        eventName,
+        teamOwner,
+        fetchTaskList,
+    } = useTaskStore();
     const { allUsers, teamUser, brands, inventories, events, fetchAllData } =
         useUserStore();
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [activeButton, setActiveButton] = useState(0);
     const [filters, setFilters] = useState({
         taskType: "all",
-        assignedTo: "",
-        assignedBy: "",
         dueDate: "all",
-        sortBy: "title",
-        order: "asc",
+        sortBy: "created_at",
+        order: "desc",
     });
 
     const filter = [
@@ -33,6 +40,7 @@ const FilterContainer = () => {
             label: "Assigned By",
             filterType: "assignedBy",
             renderImg: true,
+            selectedValue: assignedBy,
         },
         {
             type: "user",
@@ -40,6 +48,7 @@ const FilterContainer = () => {
             label: "Assigned To",
             filterType: "assignedTo",
             renderImg: true,
+            selectedValue: assignedTo,
         },
         {
             type: "user",
@@ -47,24 +56,28 @@ const FilterContainer = () => {
             label: "Team Owners",
             filterType: "teamOwner",
             renderImg: true,
+            selectedValue: teamOwner,
         },
         {
             type: "brand",
             data: brands,
             label: "Brands",
             filterType: "brandName",
+            selectedValue: brandName,
         },
         {
             type: "inventory",
             data: inventories,
             label: "Inventories",
             filterType: "inventoryName",
+            selectedValue: inventoryName,
         },
         {
             type: "event",
             data: events,
             label: "Events",
             filterType: "eventName",
+            selectedValue: eventName,
         },
     ];
 
@@ -92,7 +105,7 @@ const FilterContainer = () => {
     }, [fetchAllData]);
 
     return (
-        <DropdownMenu>
+        <DropdownMenu open={isFilterOpen}>
             <DropdownMenuTrigger>
                 <div
                     className="w-10 h-10 rounded-full flex items-center justify-center cursor-pointer bg-[#23252D] border border-[#50515B]"
@@ -107,7 +120,7 @@ const FilterContainer = () => {
                 </div>
             </DropdownMenuTrigger>
 
-            <DropdownMenuContent className="w-[350px] max-h-[600px] overflow-hidden overflow-y-auto bg-[#1B1E25] text-white border-none px-3.5 py-4 rounded-2xl">
+            <DropdownMenuContent className="w-[350px] max-h-[700px] mt-[-50px] overflow-hidden overflow-y-auto bg-[#1B1E25] text-white border-none px-3.5 py-4 rounded-2xl">
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -183,12 +196,20 @@ const FilterContainer = () => {
 
                     {/* Filter Items */}
                     {filter.map(
-                        ({ type, data, label, filterType, renderImg }) => (
+                        ({
+                            type,
+                            data,
+                            label,
+                            filterType,
+                            renderImg,
+                            selectedValue,
+                        }) => (
                             <FilterItem
                                 key={filterType}
                                 type={type}
                                 data={data}
                                 label={label}
+                                selectedFilterValue={selectedValue}
                                 filterType={filterType}
                                 handleFilterChange={handleFilterChange}
                                 renderImg={renderImg}
@@ -217,7 +238,12 @@ const FilterContainer = () => {
                                             : "bg-[#1B1E25]"
                                     }`}
                                     onClick={() =>
-                                        handleFilterChange("status", date)
+                                        handleFilterChange(
+                                            date === "All"
+                                                ? "taskType"
+                                                : "status",
+                                            date.toLowerCase()
+                                        )
                                     }
                                 >
                                     {date}
@@ -232,6 +258,7 @@ const FilterContainer = () => {
                         data={sortByValues}
                         label="Sort by"
                         filterType="sortBy"
+                        selectedFilterValue={sortBy}
                         handleFilterChange={handleFilterChange}
                     />
                 </div>

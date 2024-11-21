@@ -9,13 +9,18 @@ import {
     DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { truncateText } from "@/util/helper";
+import {
+    countWordsFromCommaSeparatedString,
+    truncateText,
+} from "@/util/helper";
+import { useTaskStore } from "@/store/taskStore";
 
 type FilterItemProps = {
     label: string;
     data: any[] | null;
     type: string;
     filterType: string;
+    selectedFilterValue?: string;
     handleFilterChange: (
         field: string,
         value: string | { sortBy: string; order: string }
@@ -28,11 +33,13 @@ const FilterItem: React.FC<FilterItemProps> = ({
     data,
     type,
     filterType,
+    selectedFilterValue,
     handleFilterChange,
     renderImg,
 }) => {
     const [searchValue, setSearchValue] = useState("");
-    const [selectedFilterValue, setSelectedFilterValue] = useState("None");
+    const { clearFilterValue, assignedBy, assignedTo, teamOwner } =
+        useTaskStore();
 
     const getItemDisplayName = useCallback(
         (item: any) => {
@@ -52,6 +59,17 @@ const FilterItem: React.FC<FilterItemProps> = ({
         },
         [type]
     );
+
+    const selectedFilterLength = useMemo(() => {
+        if (filterType === "assignedTo") {
+            return countWordsFromCommaSeparatedString(assignedTo);
+        } else if (filterType === "assignedBy") {
+            return countWordsFromCommaSeparatedString(assignedBy);
+        } else if (filterType === "teamOwner") {
+            return countWordsFromCommaSeparatedString(teamOwner);
+        }
+        return 0;
+    }, [assignedTo, assignedBy, teamOwner, filterType]);
 
     const filteredData = useMemo(
         () =>
@@ -81,15 +99,8 @@ const FilterItem: React.FC<FilterItemProps> = ({
             } else {
                 handleFilterChange(filterType, value);
             }
-
-            setSelectedFilterValue(value || "None");
         },
-        [
-            filterType,
-            selectedFilterValue,
-            handleFilterChange,
-            selectedFilterValue,
-        ]
+        [filterType, handleFilterChange]
     );
 
     return (
@@ -98,11 +109,12 @@ const FilterItem: React.FC<FilterItemProps> = ({
                 <div className="bg-taskContainer_dark cursor-pointer h-[54px] flex items-center justify-between rounded-xl py-2 px-4">
                     <div>
                         <p>{label}</p>
-                        {selectedFilterValue !== "None" && (
-                            <p className="text-sm text-gray-400">
-                                {truncateText(selectedFilterValue, 30)}
-                            </p>
-                        )}
+                        {selectedFilterValue &&
+                            selectedFilterValue !== "None" && (
+                                <p className="text-sm text-gray-400">
+                                    {truncateText(selectedFilterValue!, 24)}
+                                </p>
+                            )}
                     </div>
                     <div className="flex items-center">
                         {renderImg && (
@@ -113,7 +125,13 @@ const FilterItem: React.FC<FilterItemProps> = ({
                                     width={25}
                                     height={25}
                                 />
-                                <p className="text-blue mx-2">+4</p>
+                                <p className="text-blue mx-2">
+                                    {selectedFilterLength > 4
+                                        ? "4+"
+                                        : selectedFilterLength === 0
+                                        ? ""
+                                        : selectedFilterLength}
+                                </p>
                             </>
                         )}
                         <Image
@@ -127,17 +145,22 @@ const FilterItem: React.FC<FilterItemProps> = ({
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
                 <DropdownMenuSubContent className="w-[250px] max-h-[500px] overflow-y-auto px-2 py-2 rounded-xl bg-taskContainer_dark text-white border-none m-3">
-                    <Input
-                        type="text"
-                        value={searchValue}
-                        onChange={handleInputChange}
-                        placeholder={`Search ${label.toLowerCase()}...`}
-                        className="bg-slate-700 placeholder:text-gray-400 py-1 mb-2"
-                    />
-                    {data && (
+                    {filterType !== "sortBy" && (
+                        <Input
+                            type="text"
+                            value={searchValue}
+                            onChange={handleInputChange}
+                            placeholder={`Search ${label.toLowerCase()}...`}
+                            className="bg-slate-700 placeholder:text-gray-400 py-1 mb-2"
+                        />
+                    )}
+                    {data && filterType !== "sortBy" && (
                         <p
                             className="leading-[20px] text-gray-400 cursor-pointer hover:bg-transparent/85 rounded-lg p-2"
-                            onClick={() => handleFilterSelect("")}
+                            onClick={() => {
+                                handleFilterSelect("");
+                                clearFilterValue(filterType);
+                            }}
                         >
                             None
                         </p>

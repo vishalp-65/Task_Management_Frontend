@@ -1,8 +1,6 @@
 import React from "react";
 
-type Props = {};
-
-const TaskStatusSection = (props: Props) => {
+const TaskStatusSection = () => {
     return <div>TaskStatusSection</div>;
 };
 

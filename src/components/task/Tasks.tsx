@@ -4,6 +4,7 @@ import TaskNavbar from "./TaskNavbar";
 import Analytics from "./Analytics";
 import TaskContainer from "./TaskContainer";
 import { useTaskStore } from "@/store/taskStore";
+import { Loading } from "../Loading";
 
 const Tasks = () => {
     const { fetchTaskList, totalTasks, isLoading } = useTaskStore();
@@ -38,6 +39,10 @@ const Tasks = () => {
     //     setCurrentPage(1); // Reset to first page on new sort
     // };
 
+    if (isLoading) {
+        return <Loading />;
+    }
+
     return (
         <div className="h-full">
             <TaskNavbar
@@ -47,11 +52,7 @@ const Tasks = () => {
             <div className="h-full overflow-y-auto">
                 <Analytics />
                 <div className="mt-5 ml-2">
-                    {isLoading ? (
-                        <p>Loading tasks...</p>
-                    ) : (
-                        <TaskContainer currentTaskStatus={currentTaskStatus} />
-                    )}
+                    <TaskContainer currentTaskStatus={currentTaskStatus} />
                 </div>
 
                 {/* Pagination */}

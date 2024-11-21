@@ -24,8 +24,8 @@ const TaskInfoContainer: React.FC<Props> = ({
 
     return (
         <Dialog open={isOpen}>
-            <DialogContent className="bg-taskContainer_dark w-[70%] h-[90%] rounded-2xl p-0 text-white border-none focus:invisible">
-                <DialogHeader className="p-0 space-y-0 flex-none">
+            <DialogContent className="bg-taskContainer_dark w-[70%] overflow-hidden h-[90%] rounded-2xl p-0 text-white border-none focus:invisible">
+                <DialogHeader className="p-0 space-y-0 flex-none h-full">
                     <DialogTitle className="font-normal px-4 pt-4 pb-2.5">
                         <div className="flex justify-between">
                             <div className="flex items-center justify-center gap-3">
@@ -62,7 +62,7 @@ const TaskInfoContainer: React.FC<Props> = ({
                     </DialogTitle>
                     <Divider />
                     <div className="flex flex-row h-full w-full">
-                        <div className="basis-5/6">
+                        <div className="basis-5/6 h-full">
                             <TaskContentSection />
                         </div>
 
