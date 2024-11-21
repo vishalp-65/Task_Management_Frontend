@@ -57,6 +57,9 @@ const TextInput = ({
 const AddNewTaskModal = () => {
     const [taskType, setTaskType] = useState<string>("general");
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const { allUsers, brands, events, inventories } = useUserStore();
+    const { addTask } = useTaskStore();
+    const { toast } = useToast();
     const [taskData, setTaskData] = useState<NewTaskData>({
         title: "",
         description: "",
@@ -64,9 +67,6 @@ const AddNewTaskModal = () => {
         assigneeId: "",
         due_date: "",
     });
-    const { allUsers, brands, events, inventories } = useUserStore();
-    const { addTask } = useTaskStore();
-    const { toast } = useToast();
 
     const handleTaskDataChange = (key: keyof NewTaskData, value: string) => {
         setTaskData((prevData) => ({ ...prevData, [key]: value }));
@@ -287,4 +287,6 @@ const HeaderWithIcon = ({
 );
 
 // Divider Component
-const Divider = () => <div className="border-b border-gray-700 w-full" />;
+export const Divider = () => (
+    <div className="border-b border-gray-700 w-full" />
+);

@@ -27,7 +27,7 @@ const ConfirmationDialog: React.FC<Props> = ({
 
     return (
         <Dialog open={isOpen}>
-            <DialogContent className="bg-taskContainer_dark rounded-xl focus:invisible border-none text-white">
+            <DialogContent className="max-w-lg bg-taskContainer_dark rounded-xl focus:invisible border-none text-white">
                 <DialogHeader className="flex flex-col items-center gap-5">
                     <DialogTitle className="text-2xl font-serif">
                         Are you sure?
