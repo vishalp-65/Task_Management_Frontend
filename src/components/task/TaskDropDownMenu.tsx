@@ -11,6 +11,7 @@ import { Task } from "@/types/types";
 import { useTaskStore } from "@/store/taskStore";
 import { useToast } from "@/hooks/use-toast";
 import ConfirmationDialog from "../reusable/ConfirmationDialog";
+import TaskInfoContainer from "./taskInfo/TaskInfoContainer";
 
 type Props = {
     task: Task;
@@ -21,6 +22,8 @@ const TaskDropDownMenu: React.FC<Props> = ({ task }) => {
     const { addTask, markAsCompletedTask, deleteTask, fetchTaskList } =
         useTaskStore();
     const [buttonName, setButtonName] = useState<string>("CONFIRM");
+    const [infoOpenCloseModal, setInfoOpenCloseModal] =
+        useState<boolean>(false);
     const [dialogData, setDialogData] = useState<{
         open: boolean;
         title: string;
@@ -95,6 +98,10 @@ const TaskDropDownMenu: React.FC<Props> = ({ task }) => {
         });
     };
 
+    const handleInfoDialogOpenClose = () => {
+        setInfoOpenCloseModal(!infoOpenCloseModal);
+    };
+
     return (
         <>
             <DropdownMenu>
@@ -109,7 +116,7 @@ const TaskDropDownMenu: React.FC<Props> = ({ task }) => {
                     </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="ml-16 mb-1 w-20 md:w-52 space-y-2">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleInfoDialogOpenClose}>
                         <Image
                             src="/svg/info.svg"
                             alt="info"
@@ -209,6 +216,13 @@ const TaskDropDownMenu: React.FC<Props> = ({ task }) => {
                         await dialogData.action();
                         setDialogData((prev) => ({ ...prev, open: false }));
                     }}
+                />
+            )}
+
+            {infoOpenCloseModal && (
+                <TaskInfoContainer
+                    isOpen={infoOpenCloseModal}
+                    handleInfoDialogOpenClose={handleInfoDialogOpenClose}
                 />
             )}
         </>
